@@ -84,14 +84,14 @@ const StoreManagement = () => {
         <>
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
-                <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
+                <div className={` transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
                     <SidebarMenu collapsed={isSidebarCollapsed} />
                 </div>
                 <Container>
                     <Box my={4}>
                         <Typography variant="h4" gutterBottom>Store Management</Typography>
                         <Box mb={4} >
-                            <Bar data={barData} options={{ maintainAspectRatio: false }}/>
+                            <Bar data={barData} options={{ maintainAspectRatio: true }} />
                         </Box>
                         <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>Add Product</Button>
                         <TableContainer component={Paper} sx={{ mt: 2 }}>

@@ -90,7 +90,7 @@ const UserManagement = () => {
   return (
     <>
       <AdminNav toggleSidebar={toggleSidebar} />
-      <div style={{ display: 'flex' }}>
+      <div className='flex h-screen'>
         <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
           <SidebarMenu collapsed={isSidebarCollapsed} />
         </div>

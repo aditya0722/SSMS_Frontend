@@ -16,6 +16,8 @@ import ForgotPassword from './components/ForgotPassword';
 import AdminDashboard from './components/AdminDashboard';
 import StoreManagenemt from './components/StoreManagenemt';
 import UserManagement from './components/UserManagement';
+import AccountManagement from './components/AccountManagement';
+import BlogManagement from './components/BlogManagement';
 function App() {
 
 
@@ -32,6 +34,8 @@ function App() {
       <Route path="/AdminDashboard" element={<AdminDashboard/>}/>
       <Route path="/StoreManagenemt" element={<StoreManagenemt/>}/>
       <Route path="/UserManagement" element={<UserManagement/>}/>
+      <Route path="/AccountManagement" element={<AccountManagement/>}/>
+      <Route path="/BlogManagement" element={<BlogManagement/>}/>
     </Routes>
     <Footer/>
   </>
