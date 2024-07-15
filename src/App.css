@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.footer{
+    background-color: black;
+    display: grid;
+    grid-template-columns: repeat(1fr);
+}
+.btn{
+    display: none;
+}
+@media only screen and (max-height:980px){
+    .btn{
+        display: block;
+    }
+}
+.a-hover a:hover{
+ color:rgb(236, 238, 241);
+ background-color: rgb(40, 124, 157);
+}
