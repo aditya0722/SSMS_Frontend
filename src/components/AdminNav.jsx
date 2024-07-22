@@ -22,7 +22,7 @@ const AdminNav = ({ toggleSidebar }) => {
   }, []);
 
   return (
-    <nav className="bg-white shadow-md text-black p-4 flex items-center justify-evenly">
+    <nav className="bg-white shadow-md text-black p-4 flex items-center justify-evenly ">
       {/* Sidebar Toggle (visible only on mobile) */}
       <div className="lg:hidden">
         <button id="sidebarToggle" className=" focus:outline-none" onClick={toggleSidebar}>

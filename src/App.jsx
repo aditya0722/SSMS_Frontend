@@ -18,6 +18,11 @@ import StoreManagenemt from './components/StoreManagenemt';
 import UserManagement from './components/UserManagement';
 import AccountManagement from './components/AccountManagement';
 import BlogManagement from './components/BlogManagement';
+import UserDashboard from './components/UserDashboard';
+import Users from './components/Users';
+import UserBlogManagement from './components/UserBlockManagement';
+import UserAccountManagement from './components/UserAccountManagement';
+import UserStoreManagenemt from './components/UserStoreManagement';
 function App() {
 
 
@@ -36,6 +41,11 @@ function App() {
       <Route path="/UserManagement" element={<UserManagement/>}/>
       <Route path="/AccountManagement" element={<AccountManagement/>}/>
       <Route path="/BlogManagement" element={<BlogManagement/>}/>
+      <Route path="/UserDashboard" element={<UserDashboard/>}/>
+      <Route path="/Users" element={<Users/>}/>
+      <Route path="/UserBlogManagement" element={<UserBlogManagement/>}/>
+      <Route path="/UserAccountManagement" element={<UserAccountManagement/>}/>
+      <Route path="/UserStoreManagenemt" element={<UserStoreManagenemt/>}/>
     </Routes>
     <Footer/>
   </>

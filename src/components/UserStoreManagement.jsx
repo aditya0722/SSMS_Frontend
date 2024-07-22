@@ -4,9 +4,9 @@ import { Add, Edit, Delete } from '@mui/icons-material';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import AdminNav from './AdminNav';
-import SidebarMenu from './SidebarMenu';
-import ProductForm from './productForm';
-import ProgressBar from './ProgressBar';
+import UserSideBar from './UserSideBar';
+
+
 const initialData = [
     { id: 1, name: 'Product 1', stock: 50, price: 10.00 },
     { id: 2, name: 'Product 2', stock: 30, price: 15.00 },
@@ -17,9 +17,8 @@ const StoreManagement = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const [products, setProducts] = useState(initialData);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [formInitialData, setFormInitialData] = useState(null);
-    const [loading, setLoading] = useState(false);
+
+
     useEffect(() => {
       const handleResize = () => {
         const mobile = window.innerWidth <= 768;
@@ -39,37 +38,7 @@ const StoreManagement = () => {
       setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    const openForm = (initialData = null) => {
-        setFormInitialData(initialData);
-        setIsFormOpen(true);
-    };
 
-    const closeForm = () => {
-        setIsFormOpen(false);
-        setFormInitialData(null);
-    };
-
-    const handleFormSubmit = (product) => {
-        if (product.id) {
-            setProducts(products.map(p => p.id === product.id ? product : p));
-        } else {
-            product.id = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            setProducts([...products, product]);
-        }
-    };
-
-    const handleAdd = () => {
-        openForm();
-    };
-
-    const handleEdit = (id) => {
-        const product = products.find(p => p.id === id);
-        openForm(product);
-    };
-
-    const handleDelete = (id) => {
-        setProducts(products.filter(product => product.id !== id));
-    };
 
     const barData = {
         labels: products.map(product => product.name),
@@ -82,11 +51,10 @@ const StoreManagement = () => {
 
     return (
         <>
-          <ProgressBar loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
-                    <SidebarMenu collapsed={isSidebarCollapsed} />
+                    <UserSideBar collapsed={isSidebarCollapsed} />
                 </div>
                 <Container>
                     <Box my={4}>
@@ -96,31 +64,23 @@ const StoreManagement = () => {
                                 <Bar data={barData} options={{ maintainAspectRatio: true }} />
                             </Box>
                         </Box>
-                        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>Add Product</Button>
+                       
                         <TableContainer component={Paper} sx={{ mt: 2 }}>
                             <Table>
                                 <TableHead>
-                                    <TableRow>
+                                    <TableRow style={{backgroundColor:'skyblue'}}>
                                         <TableCell>Product</TableCell>
                                         <TableCell>Stock</TableCell>
                                         <TableCell>Price</TableCell>
-                                        <TableCell>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {products.map((product) => (
-                                        <TableRow key={product.id}>
+                                    {products.map((product,index) => (
+                                        <TableRow style={{backgroundColor:index%2==0 ? '':'whitesmoke'}} key={product.id} >
                                             <TableCell>{product.name}</TableCell>
                                             <TableCell>{product.stock}</TableCell>
                                             <TableCell>${product.price.toFixed(2)}</TableCell>
-                                            <TableCell>
-                                                <IconButton color="primary" onClick={() => handleEdit(product.id)}>
-                                                    <Edit />
-                                                </IconButton>
-                                                <IconButton color="secondary" onClick={() => handleDelete(product.id)}>
-                                                    <Delete />
-                                                </IconButton>
-                                            </TableCell>
+                                            
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -129,12 +89,7 @@ const StoreManagement = () => {
                     </Box>
                 </Container>
             </div>
-            <ProductForm
-                open={isFormOpen}
-                handleClose={closeForm}
-                handleSubmit={handleFormSubmit}
-                initialData={formInitialData}
-            />
+            
         </>
     );
 };

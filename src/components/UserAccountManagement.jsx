@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import AdminNav from './AdminNav';
-import SidebarMenu from './SidebarMenu';
-import { Container, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Select, MenuItem } from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import UserSideBar from './UserSideBar';
+import { Container, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem } from '@mui/material';
+
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
-import AccountForm from './AccountForm';
-import ProgressBar from './ProgressBar';
+
+
 const initialData = [
     { id: 1, description: 'Salary', amount: 5000, category: 'salary', date: '2024-01-15' },
     { id: 2, description: 'Bonus', amount: 1500, category: 'bonus', date: '2024-03-20' },
@@ -20,10 +20,9 @@ const AccountManagement = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [transactions, setTransactions] = useState(initialData);
     const [year, setYear] = useState(new Date().getFullYear());
-    const [isIncomeDialogOpen, setIsIncomeDialogOpen] = useState(false);
-    const [isExpenditureDialogOpen, setIsExpenditureDialogOpen] = useState(false);
+  
     const [editData, setEditData] = useState(null);
-    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         const handleResize = () => {
           const mobile = window.innerWidth <= 768;
@@ -43,44 +42,7 @@ const AccountManagement = () => {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
-    const handleAddIncome = () => {
-        setEditData(null);
-        setIsIncomeDialogOpen(true);
-    };
 
-    const handleAddExpenditure = () => {
-        setEditData(null);
-        setIsExpenditureDialogOpen(true);
-    };
-
-    const handleEditTransaction = (transaction) => {
-        setEditData(transaction);
-        if (transaction.amount >= 0) {
-            setIsIncomeDialogOpen(true);
-        } else {
-            setIsExpenditureDialogOpen(true);
-        }
-    };
-
-    const handleDeleteTransaction = (id) => {
-        setTransactions(transactions.filter(transaction => transaction.id !== id));
-    };
-
-    const handleIncomeSubmit = (transaction) => {
-        if (editData) {
-            setTransactions(transactions.map(t => t.id === editData.id ? transaction : t));
-        } else {
-            setTransactions([...transactions, { ...transaction, id: transactions.length + 1 }]);
-        }
-    };
-
-    const handleExpenditureSubmit = (transaction) => {
-        if (editData) {
-            setTransactions(transactions.map(t => t.id === editData.id ? transaction : t));
-        } else {
-            setTransactions([...transactions, { ...transaction, id: transactions.length + 1 }]);
-        }
-    };
 
     const monthlyData = (type) => {
         const months = Array(12).fill(0);
@@ -141,11 +103,10 @@ const AccountManagement = () => {
 
     return (
         <>
-          <ProgressBar loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
-                    <SidebarMenu collapsed={isSidebarCollapsed} />
+                    <UserSideBar collapsed={isSidebarCollapsed} />
                 </div>
                 <Container>
                     <Box my={4}>
@@ -163,6 +124,7 @@ const AccountManagement = () => {
                             </Select>
                             <Bar data={barData} options={{ maintainAspectRatio: false }}/>
                         </Box>
+                        <Container sx={{display:"flex"}}>
                         <Box mb={10} height={200}>
                             <Typography variant="h6" gutterBottom>Income Distribution</Typography>
                             <Pie data={incomePieData} />
@@ -171,12 +133,8 @@ const AccountManagement = () => {
                             <Typography variant="h6" gutterBottom>Expenditure Distribution</Typography>
                             <Pie data={expenditurePieData} />
                         </Box>
-                        <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAddIncome}>
-                            Add Income
-                        </Button>
-                        <Button variant="contained" color="secondary" startIcon={<Add />} onClick={handleAddExpenditure} sx={{ ml: 2 }}>
-                            Add Expenditure
-                        </Button>
+                        </Container>
+                        
                         <TableContainer component={Paper} sx={{ mt: 2 }}>
                             <Table>
                                 <TableHead>
@@ -185,7 +143,7 @@ const AccountManagement = () => {
                                         <TableCell>Amount</TableCell>
                                         <TableCell>Category</TableCell>
                                         <TableCell>Date</TableCell>
-                                        <TableCell>Actions</TableCell>
+                                       
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -195,14 +153,7 @@ const AccountManagement = () => {
                                             <TableCell style={{ color: transaction.amount >= 0 ? 'green' : 'red' }}>{transaction.amount}</TableCell>
                                             <TableCell>{transaction.category}</TableCell>
                                             <TableCell>{transaction.date}</TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleEditTransaction(transaction)}>
-                                                    <Edit />
-                                                </IconButton>
-                                                <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
-                                                    <Delete />
-                                                </IconButton>
-                                            </TableCell>
+                                           
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -211,20 +162,7 @@ const AccountManagement = () => {
                     </Box>
                 </Container>
             </div>
-            <AccountForm
-                open={isIncomeDialogOpen}
-                handleClose={() => setIsIncomeDialogOpen(false)}
-                handleSubmit={handleIncomeSubmit}
-                initialData={editData}
-                type="Income"
-            />
-            <AccountForm
-                open={isExpenditureDialogOpen}
-                handleClose={() => setIsExpenditureDialogOpen(false)}
-                handleSubmit={handleExpenditureSubmit}
-                initialData={editData}
-                type="Expenditure"
-            />
+          
         </>
     );
 };

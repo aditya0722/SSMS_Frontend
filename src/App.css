@@ -19,3 +19,13 @@
  color:rgb(236, 238, 241);
  background-color: rgb(40, 124, 157);
 }
+
+.fixed-sidebar {
+    position: absolute !important; 
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px; /* Adjust width as needed */
+    overflow-y: auto;
+    
+}

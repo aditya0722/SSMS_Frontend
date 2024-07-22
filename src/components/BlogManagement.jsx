@@ -3,7 +3,7 @@ import { Container, Typography, Button, Box, IconButton, Dialog, DialogTitle, Di
 import { Add, Edit, Delete } from '@mui/icons-material';
 import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
-
+import ProgressBar from './ProgressBar';
 const BlogManagement = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
@@ -12,7 +12,7 @@ const BlogManagement = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [formData, setFormData] = useState({ title: '', description: '', date: '', location: '', image: '' });
     const isSmallScreen = useMediaQuery('(max-width: 768px)');
-
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         const handleResize = () => {
             const mobile = window.innerWidth <= 768;
@@ -95,6 +95,7 @@ const BlogManagement = () => {
 
     return (
         <>
+          <ProgressBar loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div className='flex min-h-screen'>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
