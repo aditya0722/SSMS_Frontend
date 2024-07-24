@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Container, Box, Alert, Typography, Snackbar, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -7,36 +7,65 @@ import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
 import ProductForm from './productForm';
 import ProgressBar from './ProgressBar';
-const initialData = [
-    { id: 1, name: 'Product 1', stock: 50, price: 10.00 },
-    { id: 2, name: 'Product 2', stock: 30, price: 15.00 },
-    // Add more initial data as needed
-];
+import Spinner from './Spinner';
+import ConfirmDialog from './ConfirmDialog';
+import axios from 'axios';
 
 const StoreManagement = () => {
+    const [products, setProducts] = useState([]);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
-    const [products, setProducts] = useState(initialData);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [formInitialData, setFormInitialData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
+    const [progressLoading, setProgressLoading] = useState(false);
+
     useEffect(() => {
-      const handleResize = () => {
-        const mobile = window.innerWidth <= 768;
-        setIsMobile(mobile);
-        setIsSidebarCollapsed(mobile); // Collapse sidebar on mobile
-      };
+        let isMounted = true;
 
-      window.addEventListener('resize', handleResize);
-      handleResize();
+        const fetchItems = async () => {
+            setProgressLoading(true);
+            try {
+                const response = await axios.get("http://localhost:3000/api/store");
+                if (isMounted) {
+                    setProducts(response.data);
+                    setProgressLoading(false);
+                }
+            } catch (e) {
+                console.error(e);
+                if (isMounted) {
+                    setProgressLoading(false);
+                }
+            }
+        };
 
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
+        fetchItems();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            setIsSidebarCollapsed(mobile); // Collapse sidebar on mobile
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     const toggleSidebar = () => {
-      setIsSidebarCollapsed(!isSidebarCollapsed);
+        setIsSidebarCollapsed(!isSidebarCollapsed);
     };
 
     const openForm = (initialData = null) => {
@@ -49,13 +78,29 @@ const StoreManagement = () => {
         setFormInitialData(null);
     };
 
-    const handleFormSubmit = (product) => {
-        if (product.id) {
-            setProducts(products.map(p => p.id === product.id ? product : p));
-        } else {
-            product.id = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            setProducts([...products, product]);
+    const handleFormSubmit = async (product) => {
+        setLoading(true);
+        let productId=null;
+        productId=product._id;
+        console.log(productId)
+        try {
+            if (productId!=null) {
+                console.log("udpade")
+                await axios.put(`http://localhost:3000/api/updateItem/${product._id}`, product);
+                setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
+            } else {
+                console.log("insert")
+                await axios.post("http://localhost:3000/api/addItem", product);
+                setSnackbar({ open: true, message: 'Item Added Successfully!', severity: 'success' });
+            }
+            const response = await axios.get("http://localhost:3000/api/store");
+            setProducts(response.data);
+        } catch (e) {
+            console.error(e);
+            setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
         }
+        setLoading(false);
+        closeForm();
     };
 
     const handleAdd = () => {
@@ -63,16 +108,37 @@ const StoreManagement = () => {
     };
 
     const handleEdit = (id) => {
-        const product = products.find(p => p.id === id);
+        const product = products.find(p => p._id === id);
         openForm(product);
     };
 
-    const handleDelete = (id) => {
-        setProducts(products.filter(product => product.id !== id));
+    const openConfirmDialog = (id) => {
+        setDeleteId(id);
+        setIsConfirmOpen(true);
+    };
+
+    const closeConfirmDialog = () => {
+        setDeleteId(null);
+        setIsConfirmOpen(false);
+    };
+
+    const handleDelete = async () => {
+        setLoading(true);
+        try {
+            await axios.delete(`http://localhost:3000/api/deleteItem/${deleteId}`);
+            const response = await axios.get("http://localhost:3000/api/store");
+            setProducts(response.data);
+            setSnackbar({ open: true, message: 'Item Deleted Successfully!', severity: 'success' });
+        } catch (e) {
+            console.error(e);
+            setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
+        }
+        setLoading(false);
+        closeConfirmDialog();
     };
 
     const barData = {
-        labels: products.map(product => product.name),
+        labels: products.map(product => product.itemName),
         datasets: [{
             label: 'Stock Level',
             data: products.map(product => product.stock),
@@ -82,7 +148,8 @@ const StoreManagement = () => {
 
     return (
         <>
-          <ProgressBar loading={loading} />
+            <Spinner loading={loading} />
+            <ProgressBar loading={progressLoading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
@@ -101,23 +168,27 @@ const StoreManagement = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Product</TableCell>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Item</TableCell>
                                         <TableCell>Stock</TableCell>
-                                        <TableCell>Price</TableCell>
+                                        <TableCell>Price per item</TableCell>
+                                        <TableCell>Date of Added</TableCell>
                                         <TableCell>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {products.map((product) => (
-                                        <TableRow key={product.id}>
-                                            <TableCell>{product.name}</TableCell>
+                                    {products.map((product, index) => (
+                                        <TableRow key={product._id}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{product.itemName}</TableCell>
                                             <TableCell>{product.stock}</TableCell>
-                                            <TableCell>${product.price.toFixed(2)}</TableCell>
+                                            <TableCell>{product.price}</TableCell>
+                                            <TableCell>{product.addedAt}</TableCell>
                                             <TableCell>
-                                                <IconButton color="primary" onClick={() => handleEdit(product.id)}>
+                                                <IconButton color="primary" onClick={() => handleEdit(product._id)}>
                                                     <Edit />
                                                 </IconButton>
-                                                <IconButton color="secondary" onClick={() => handleDelete(product.id)}>
+                                                <IconButton color="secondary" onClick={() => openConfirmDialog(product._id)}>
                                                     <Delete />
                                                 </IconButton>
                                             </TableCell>
@@ -126,6 +197,12 @@ const StoreManagement = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                            <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                                {snackbar.message}
+                            </Alert>
+                        </Snackbar>
+                        <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirmDialog} handleConfirm={handleDelete} title="Delete Item" description="Are you sure you want to delete this item?" />
                     </Box>
                 </Container>
             </div>

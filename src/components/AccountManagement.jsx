@@ -1,29 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
-import { Container, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Select, MenuItem } from '@mui/material';
+import { Container, Typography,Snackbar,Alert, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Select, MenuItem } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import AccountForm from './AccountForm';
 import ProgressBar from './ProgressBar';
-const initialData = [
-    { id: 1, description: 'Salary', amount: 5000, category: 'salary', date: '2024-01-15' },
-    { id: 2, description: 'Bonus', amount: 1500, category: 'bonus', date: '2024-03-20' },
-    { id: 3, description: 'Groceries', amount: -200, category: 'groceries', date: '2024-01-10' },
-    { id: 4, description: 'Utilities', amount: -100, category: 'utilities', date: '2024-02-05' },
-    // Add more initial data as needed
-];
+import axios from "axios";
+import Spinner from './Spinner';
+import ConfirmDialog from './ConfirmDialog';
 
 const AccountManagement = () => {
+    const [progressLoading, setProgressLoading] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
-    const [transactions, setTransactions] = useState(initialData);
+    const [transactions, setTransactions] = useState([]);
     const [year, setYear] = useState(new Date().getFullYear());
     const [isIncomeDialogOpen, setIsIncomeDialogOpen] = useState(false);
     const [isExpenditureDialogOpen, setIsExpenditureDialogOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    useEffect(()=>{
+        
+        const getData= async()=>{
+            setLoading(true);
+            try{
+             const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+                setTransactions(response.data.data);
+                console.log(transactions)
+            }catch(e){
+                console.log(e)
+            }
+            setLoading(false);
+        }
+        getData();
+       
+    },[])
     useEffect(() => {
         const handleResize = () => {
           const mobile = window.innerWidth <= 768;
@@ -55,40 +71,133 @@ const AccountManagement = () => {
 
     const handleEditTransaction = (transaction) => {
         setEditData(transaction);
-        if (transaction.amount >= 0) {
+        if (transaction.ammount >= 0) {
             setIsIncomeDialogOpen(true);
         } else {
             setIsExpenditureDialogOpen(true);
         }
     };
 
-    const handleDeleteTransaction = (id) => {
-        setTransactions(transactions.filter(transaction => transaction.id !== id));
-    };
-
-    const handleIncomeSubmit = (transaction) => {
-        if (editData) {
-            setTransactions(transactions.map(t => t.id === editData.id ? transaction : t));
-        } else {
-            setTransactions([...transactions, { ...transaction, id: transactions.length + 1 }]);
+    const handleDeleteTransaction = async(id) => {
+        setLoading(true)
+        try{
+            await axios.delete(`http://localhost:3000/api/deletetransaction/${id}`);
+            const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+            setTransactions(response.data.data);
+            setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
+            setLoading(false)
+            setIsConfirmOpen(false)
         }
-    };
-
-    const handleExpenditureSubmit = (transaction) => {
-        if (editData) {
-            setTransactions(transactions.map(t => t.id === editData.id ? transaction : t));
-        } else {
-            setTransactions([...transactions, { ...transaction, id: transactions.length + 1 }]);
+        catch(e){
+            console.log(e)
+            setLoading(false)
+            setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
+            setIsConfirmOpen(false)
         }
+        finally{
+            setLoading(false)
+            setIsConfirmOpen(false)
+        }
+        setLoading(false)
+        setIsConfirmOpen(false)
     };
 
-    const monthlyData = (type) => {
+    const handleIncomeSubmit = async(transaction) => {
+        setLoading(true);
+        transaction.type = "Income";
+        console.log(transaction)
+        if (editData) {
+            try{
+                await axios.put(`http://localhost:3000/api/UpdateTransaction/${editData._id}`, transaction);
+                setSnackbar({ open: true, message: 'Transaction Updated Successfully!', severity: 'success' });
+                const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+                setTransactions(response.data.data);
+                setLoading(false);
+            }
+            catch(e){
+                console.log(e)
+                
+                setSnackbar({ open: true, message:e.response.data.msg, severity: 'error' });
+                setLoading(false);
+            }
+            finally{
+                setLoading(false);
+            }
+            
+                
+        } else {
+            console.log(transaction)
+            try{
+                await axios.post("http://localhost:3000/api/addTransaction",transaction);
+                console.log("success");
+                const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+                setTransactions(response.data.data);
+                setSnackbar({ open: true, message: 'Transaction Added Successfully!', severity: 'success' });
+            }catch(e){
+                setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
+                console.log(e)
+            }finally{
+                setLoading(false);
+            }
+            
+        }
+        setLoading(false);
+    };
+
+    const handleExpenditureSubmit = async(transaction) => {
+        setLoading(true);
+        transaction.type = "Expenditure";
+        if (editData) {
+            try{
+                await axios.put(`http://localhost:3000/api/UpdateTransaction/${editData._id}`, transaction);
+                const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+                setTransactions(response.data.data);
+                setSnackbar({ open: true, message: 'Transaction Updated Successfully!', severity: 'success' });
+            }
+            catch(e){
+                console.log(e)
+                
+                setSnackbar({ open: true, message:e.response.data.msg, severity: 'error' });
+                setLoading(false);
+            }
+            finally{
+                setLoading(false);
+            }
+        } else {
+            console.log(transaction)
+            try{
+                await axios.post("http://localhost:3000/api/addTransaction",transaction);
+                console.log("success");
+                const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+                setTransactions(response.data.data);
+                setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
+            }catch(e){
+                setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
+                console.log(e)
+            }finally{
+                setLoading(false);
+            }
+            
+        }
+        setLoading(false);
+    };
+    const openConfirm = (id) => {
+        setUserToDelete(id);
+        setIsConfirmOpen(true);
+      };
+      const closeConfirm = () => {
+        setIsConfirmOpen(false);
+        setUserToDelete(null);
+      };
+
+   
+      const monthlyData = (type) => {
         const months = Array(12).fill(0);
         transactions
-            .filter(t => t.amount >= (type === 'income' ? 0 : -Infinity) && new Date(t.date).getFullYear() === year)
+            .filter(t => (type === 'income' ? t.ammount >= 0 : t.ammount < 0) && new Date(t.date).getFullYear() === year)
             .forEach(t => {
                 const month = new Date(t.date).getMonth();
-                months[month] += type === 'income' ? t.amount : -t.amount;
+                months[month] += type === 'income' ? t.ammount : -t.ammount;
             });
         return months;
     };
@@ -109,39 +218,53 @@ const AccountManagement = () => {
         ],
     };
 
-    const incomePieData = {
-        labels: ['Salary', 'Bonus', 'Other'],
-        datasets: [
-            {
-                label: 'Income Sources',
-                data: [
-                    transactions.filter(t => t.category === 'salary' && t.amount >= 0).reduce((acc, t) => acc + t.amount, 0),
-                    transactions.filter(t => t.category === 'bonus' && t.amount >= 0).reduce((acc, t) => acc + t.amount, 0),
-                    transactions.filter(t => t.category === 'other' && t.amount >= 0).reduce((acc, t) => acc + t.amount, 0),
-                ],
-                backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'],
-            },
-        ],
+    const pieData = (type) => {
+        const categories = type === 'Income' ? ['Donations', 'Monthly Income', 'Join Fee', 'Others'] : ['Maintenance', 'Donations', 'Utilities', 'Others'];
+    
+        // Convert type to uppercase for comparison consistency
+        const normalizedType = type.toUpperCase();
+    
+        console.log(`Generating pie data for type: ${type}`);
+        console.log('Transactions:', transactions);
+    
+        const data = categories.map(category => {
+            const normalizedCategory = category.toUpperCase();
+            const filteredTransactions = transactions.filter(t => {
+                const isCategoryMatch = t.category.toUpperCase() === normalizedCategory;
+                const isTypeMatch = t.type.toUpperCase() === normalizedType;
+                console.log(`Transaction: ${JSON.stringify(t)}, Category Match: ${isCategoryMatch}, Type Match: ${isTypeMatch}`);
+                return isCategoryMatch && isTypeMatch;
+            });
+    
+            console.log(`Filtered Transactions for ${category}:`, filteredTransactions);
+    
+            return filteredTransactions.reduce((acc, t) => acc + t.ammount, 0);
+        });
+    
+        console.log(`Data for ${type} Pie Chart:`, data);
+    
+        return {
+            labels: categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
+            datasets: [
+                {
+                    label: `${type.charAt(0).toUpperCase() + type.slice(1)} Sources`,
+                    data: data,
+                    backgroundColor: type === 'Income'
+                        ? ['rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)', 'rgba(225,140,120,0.5)']
+                        : ['rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)', 'rgba(153, 102, 255, 0.5)'],
+                },
+            ],
+        };
     };
-
-    const expenditurePieData = {
-        labels: ['Groceries', 'Utilities', 'Other'],
-        datasets: [
-            {
-                label: 'Expenditure Sources',
-                data: [
-                    transactions.filter(t => t.category === 'groceries' && t.amount < 0).reduce((acc, t) => acc + t.amount, 0),
-                    transactions.filter(t => t.category === 'utilities' && t.amount < 0).reduce((acc, t) => acc + t.amount, 0),
-                    transactions.filter(t => t.category === 'other' && t.amount < 0).reduce((acc, t) => acc + t.amount, 0),
-                ],
-                backgroundColor: ['rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-            },
-        ],
-    };
-
+    
+    
+    
+    
+  
     return (
         <>
           <ProgressBar loading={loading} />
+          <Spinner loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
@@ -163,13 +286,15 @@ const AccountManagement = () => {
                             </Select>
                             <Bar data={barData} options={{ maintainAspectRatio: false }}/>
                         </Box>
+                        <Box className="flex space-evenly">
                         <Box mb={10} height={200}>
                             <Typography variant="h6" gutterBottom>Income Distribution</Typography>
-                            <Pie data={incomePieData} />
+                            <Pie data={pieData('income')} />
                         </Box>
                         <Box mb={10} height={200}>
                             <Typography variant="h6" gutterBottom>Expenditure Distribution</Typography>
-                            <Pie data={expenditurePieData} />
+                            <Pie data={pieData('expenditure')} />
+                        </Box>
                         </Box>
                         <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAddIncome}>
                             Add Income
@@ -181,25 +306,28 @@ const AccountManagement = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        
                                         <TableCell>Description</TableCell>
                                         <TableCell>Amount</TableCell>
                                         <TableCell>Category</TableCell>
                                         <TableCell>Date</TableCell>
+                                        <TableCell>Member</TableCell>
                                         <TableCell>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {transactions.filter(t => new Date(t.date).getFullYear() === year).map((transaction) => (
-                                        <TableRow key={transaction.id}>
+                                        <TableRow key={transaction._id}>
                                             <TableCell>{transaction.description}</TableCell>
-                                            <TableCell style={{ color: transaction.amount >= 0 ? 'green' : 'red' }}>{transaction.amount}</TableCell>
+                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>{transaction.ammount}</TableCell>
                                             <TableCell>{transaction.category}</TableCell>
                                             <TableCell>{transaction.date}</TableCell>
+                                            <TableCell>{transaction.name}</TableCell>
                                             <TableCell>
                                                 <IconButton onClick={() => handleEditTransaction(transaction)}>
                                                     <Edit />
                                                 </IconButton>
-                                                <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
+                                                <IconButton onClick={() => openConfirm(transaction._id)}>
                                                     <Delete />
                                                 </IconButton>
                                             </TableCell>
@@ -210,6 +338,12 @@ const AccountManagement = () => {
                         </TableContainer>
                     </Box>
                 </Container>
+                <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                            <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                                {snackbar.message}
+                            </Alert>
+                        </Snackbar>
+                        <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => handleDeleteTransaction(userToDelete)} title="Delete Transaction" description="Are you sure you want to delete this Transaction?" />
             </div>
             <AccountForm
                 open={isIncomeDialogOpen}

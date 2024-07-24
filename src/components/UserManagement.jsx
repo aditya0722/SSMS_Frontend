@@ -55,7 +55,17 @@ const UserManagement = () => {
     setIsFormOpen(true);
   };
   const closeForm = () => {
-    
+    setUsers({
+      name: '',
+      email: '',
+      address: '',
+      dob: '',
+      contact: '',
+      joiningDate: '',
+      role: 'Member',
+      userType: 'user',
+      image: null
+    });
     setIsFormOpen(false);
     setFormInitialData(null);
   };

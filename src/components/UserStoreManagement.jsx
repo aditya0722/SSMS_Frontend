@@ -14,9 +14,11 @@ const initialData = [
 ];
 
 const StoreManagement = () => {
+    //const [initialData, setinitialData] = useState([])
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const [products, setProducts] = useState(initialData);
+
 
 
     useEffect(() => {
@@ -51,6 +53,7 @@ const StoreManagement = () => {
 
     return (
         <>
+      
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
