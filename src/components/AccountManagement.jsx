@@ -29,7 +29,7 @@ const AccountManagement = () => {
         const getData= async()=>{
             setLoading(true);
             try{
-             const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+             const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 console.log(transactions)
             }catch(e){
@@ -81,8 +81,8 @@ const AccountManagement = () => {
     const handleDeleteTransaction = async(id) => {
         setLoading(true)
         try{
-            await axios.delete(`https://ssmss-backend.onrender.com/deletetransaction/${id}`);
-            const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+            await axios.delete(`https://ssmss-backend.onrender.com/api/deletetransaction/${id}`);
+            const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
             setTransactions(response.data.data);
             setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
             setLoading(false)
@@ -108,9 +108,9 @@ const AccountManagement = () => {
         console.log(transaction)
         if (editData) {
             try{
-                await axios.put(`https://ssmss-backend.onrender.com/UpdateTransaction/${editData._id}`, transaction);
+                await axios.put(`https://ssmss-backend.onrender.com/api/UpdateTransaction/${editData._id}`, transaction);
                 setSnackbar({ open: true, message: 'Transaction Updated Successfully!', severity: 'success' });
-                const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+                const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 setLoading(false);
             }
@@ -128,9 +128,9 @@ const AccountManagement = () => {
         } else {
             console.log(transaction)
             try{
-                await axios.post("https://ssmss-backend.onrender.com/addTransaction",transaction);
+                await axios.post("https://ssmss-backend.onrender.com/api/addTransaction",transaction);
                 console.log("success");
-                const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+                const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 setSnackbar({ open: true, message: 'Transaction Added Successfully!', severity: 'success' });
             }catch(e){
@@ -149,8 +149,8 @@ const AccountManagement = () => {
         transaction.type = "Expenditure";
         if (editData) {
             try{
-                await axios.put(`https://ssmss-backend.onrender.com/UpdateTransaction/${editData._id}`, transaction);
-                const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+                await axios.put(`https://ssmss-backend.onrender.com/api/UpdateTransaction/${editData._id}`, transaction);
+                const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 setSnackbar({ open: true, message: 'Transaction Updated Successfully!', severity: 'success' });
             }
@@ -166,9 +166,9 @@ const AccountManagement = () => {
         } else {
             console.log(transaction)
             try{
-                await axios.post("https://ssmss-backend.onrender.com/api/addTransaction",transaction);
+                await axios.post("https://ssmss-backend.onrender.com/api/api/addTransaction",transaction);
                 console.log("success");
-                const response= await axios.get("https://ssmss-backend.onrender.com/getAccountDetails");
+                const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
             }catch(e){
