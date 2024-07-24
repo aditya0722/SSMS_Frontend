@@ -25,7 +25,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get("http://localhost:3000/api/login/members");
+        const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
         setUsers(data);
       } catch (error) {
         console.error(error);
@@ -78,9 +78,9 @@ const UserManagement = () => {
 
     try {
   
-      await axios.post("http://localhost:3000/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post("https://ssmss-backend.onrender.com/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
-      const { data } = await axios.get("http://localhost:3000/api/login/members");
+      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
       setUsers(data);
     } catch (error) {
       let msg=error.response.data.data;
@@ -98,9 +98,9 @@ const UserManagement = () => {
     });
 
     try {
-      await axios.put(`http://localhost:3000/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.put(`https://ssmss-backend.onrender.com/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User updated successfully', severity: 'success' });
-      const { data } = await axios.get("http://localhost:3000/api/login/members");
+      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
       setUsers(data);
     } catch (error) {
       setSnackbar({ open: true, message: 'Error occurred', severity: 'error' });
@@ -120,7 +120,7 @@ const UserManagement = () => {
   const handleDelete = async (id) => {
     console.log(id)
     try {
-      await axios.delete(`http://localhost:3000/api/deleteUser/${id}`);
+      await axios.delete(`https://ssmss-backend.onrender.com/api/deleteUser/${id}`);
       setUsers(users.filter(user => user._id !== id));
       setSnackbar({ open: true, message: 'User deleted successfully!', severity: 'success' });
     } catch (error) {
