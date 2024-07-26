@@ -55,17 +55,7 @@ const UserManagement = () => {
     setIsFormOpen(true);
   };
   const closeForm = () => {
-    setUsers({
-      name: '',
-      email: '',
-      address: '',
-      dob: '',
-      contact: '',
-      joiningDate: '',
-      role: 'Member',
-      userType: 'user',
-      image: null
-    });
+    
     setIsFormOpen(false);
     setFormInitialData(null);
   };
@@ -80,11 +70,10 @@ const UserManagement = () => {
   
       await axios.post("https://ssmss-backend.onrender.com/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
-      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
-      setUsers(data);
     } catch (error) {
       let msg=error.response.data.data;
       setSnackbar({ open: true, message: `${msg}`, severity: 'error' });
+      setFormLoading(false);
     } finally {
       setFormLoading(false);
       closeForm();
@@ -100,8 +89,7 @@ const UserManagement = () => {
     try {
       await axios.put(`https://ssmss-backend.onrender.com/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User updated successfully', severity: 'success' });
-      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
-      setUsers(data);
+      
     } catch (error) {
       setSnackbar({ open: true, message: 'Error occurred', severity: 'error' });
     } finally {

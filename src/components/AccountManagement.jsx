@@ -166,11 +166,11 @@ const AccountManagement = () => {
         } else {
             console.log(transaction)
             try{
-                await axios.post("https://ssmss-backend.onrender.com/api/api/addTransaction",transaction);
+                await axios.post("https://ssmss-backend.onrender.com/api/addTransaction",transaction);
                 console.log("success");
                 const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
-                setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
+                setSnackbar({ open: true, message: 'Transaction addres Successfully!', severity: 'success' });
             }catch(e){
                 setSnackbar({ open: true, message: 'An error occurred!', severity: 'error' });
                 console.log(e)
@@ -219,7 +219,7 @@ const AccountManagement = () => {
     };
 
     const pieData = (type) => {
-        const categories = type === 'Income' ? ['Donations', 'Monthly Income', 'Join Fee', 'Others'] : ['Maintenance', 'Donations', 'Utilities', 'Others'];
+        const categories = type === 'Income' ? ['Donations', 'Monthly', 'joiningFee', 'Other'] : ['Maintenance', 'Donations', 'Utilities', 'Other'];
     
         // Convert type to uppercase for comparison consistency
         const normalizedType = type.toUpperCase();
