@@ -102,6 +102,7 @@ const StoreManagement = () => {
         setLoading(false);
         closeForm();
     };
+   
 
     const handleAdd = () => {
         openForm();
@@ -114,7 +115,7 @@ const StoreManagement = () => {
 
     const openConfirmDialog = (id) => {
         setDeleteId(id);
-        setIsConfirmOpen(true);
+        setIsConfirmOpen(false);
     };
 
     const closeConfirmDialog = () => {
@@ -148,6 +149,7 @@ const StoreManagement = () => {
 
     return (
         <>
+       
             <Spinner loading={loading} />
             <ProgressBar loading={progressLoading} />
             <AdminNav toggleSidebar={toggleSidebar} />
@@ -164,6 +166,7 @@ const StoreManagement = () => {
                             </Box>
                         </Box>
                         <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>Add Product</Button>
+                        <Button variant="contained" color="secondary" startIcon={<Add />} sx={{ml:5}}>Add Recipt</Button>
                         <TableContainer component={Paper} sx={{ mt: 2 }}>
                             <Table>
                                 <TableHead>

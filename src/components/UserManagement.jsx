@@ -20,16 +20,17 @@ const UserManagement = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-
   useEffect(() => {
     const fetchUsers = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
+        setFormLoading(true);
         const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
         setUsers(data);
       } catch (error) {
         console.error(error);
       } finally {
+        setFormLoading(false);
         setLoading(false);
       }
     };
@@ -49,29 +50,54 @@ const UserManagement = () => {
   }, []);
 
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
-  const openForm = (initialData = null) => {
 
+  const openForm = (initialData = null) => {
     setFormInitialData(initialData);
     setIsFormOpen(true);
   };
+
   const closeForm = () => {
-    
-    setIsFormOpen(false);
     setFormInitialData(null);
+    setIsFormOpen(false);
+  };
+
+  const generateOTP = () => {
+    let otp = '';
+    for (let i = 0; i < 6; i++) {
+      otp += Math.floor(Math.random() * 10);
+    }
+    return otp;
+  };
+
+  const sendSMS = async (phoneNumber, otp) => {
+    const url = `https://www.fast2sms.com/dev/bulkV2?authorization=OIdPDZthq96GBAHE0YfNcvMSzURVyunrs8Q7Km3xLXbTwg4opj1Q8oCBqVhjJf9HGZRtIngAvNrs563P&route=otp&variables_values=${otp}&flash=0&numbers=${phoneNumber}`;
+
+    try {
+      const response = await axios.get(url);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error response:', error.response.data);
+      console.error('Error message:', error.message);
+    }
   };
 
   const handleAddUser = async (user) => {
+
     const formData = new FormData();
     Object.entries(user).forEach(([key, value]) => {
       formData.append(key, value instanceof File ? value : value);
     });
+    let otp = generateOTP();
+    formData.append('password', otp);
 
     try {
-  
       await axios.post("https://ssmss-backend.onrender.com/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      //sendSMS(user.contact, otp);
+      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
+      setUsers(data);
       setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
     } catch (error) {
-      let msg=error.response.data.data;
+      let msg = error.response.data.data;
       setSnackbar({ open: true, message: `${msg}`, severity: 'error' });
       setFormLoading(false);
     } finally {
@@ -89,7 +115,6 @@ const UserManagement = () => {
     try {
       await axios.put(`https://ssmss-backend.onrender.com/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User updated successfully', severity: 'success' });
-      
     } catch (error) {
       setSnackbar({ open: true, message: 'Error occurred', severity: 'error' });
     } finally {
@@ -103,10 +128,14 @@ const UserManagement = () => {
     formInitialData ? await handleUpdateUser(user) : await handleAddUser(user);
   };
 
-  const handleAdd = () => openForm();
-  const handleEdit = (user) => openForm(user);
+  const handleAdd = () => {
+     console.log("add")   
+    openForm()
+  };
+  const handleEdit = (user) => {
+    console.log(user)   
+    openForm(user);}
   const handleDelete = async (id) => {
-    console.log(id)
     try {
       await axios.delete(`https://ssmss-backend.onrender.com/api/deleteUser/${id}`);
       setUsers(users.filter(user => user._id !== id));
@@ -122,6 +151,7 @@ const UserManagement = () => {
     setUserToDelete(id);
     setIsConfirmOpen(true);
   };
+
   const closeConfirm = () => {
     setIsConfirmOpen(false);
     setUserToDelete(null);
@@ -164,7 +194,11 @@ const UserManagement = () => {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user._id}>
-                      <TableCell><img src={user.imageUrl} alt="User" height="100" width="100" /></TableCell>
+                      <TableCell>{user.imageUrl ? (
+                        <img src={user.imageUrl} alt="User" height="100" width="100" />
+                      ) : (
+                        <img src="https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg" alt="User" height="100" width="100" />
+                      )}</TableCell>
                       <TableCell>{user.name}</TableCell>
                       <TableCell>{user.address}</TableCell>
                       <TableCell>{user.contact}</TableCell>
@@ -189,12 +223,11 @@ const UserManagement = () => {
           </Box>
         </Container>
       </div>
-      <UserForm open={isFormOpen} handleClose={closeForm} handleSubmit={handleFormSubmit} initialData={formInitialData} />
       <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => handleDelete(userToDelete)} title="Delete User" description="Are you sure you want to delete this user?" />
+      <UserForm open={isFormOpen} handleClose={closeForm} handleSubmit={handleFormSubmit} initialData={formInitialData} />
       <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
         <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
+          {snackbar.message}        </Alert>
       </Snackbar>
     </>
   );

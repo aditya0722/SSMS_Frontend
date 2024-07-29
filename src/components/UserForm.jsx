@@ -18,13 +18,29 @@ const UserForm = ({ open, handleClose, handleSubmit, initialData }) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    console.log("data",initialData)
     if (initialData) {
       setUser(initialData);
       if (initialData.image) {
         setPreview(URL.createObjectURL(initialData.image));
       }
     }
-  }, [initialData]);
+    else{
+      setUser({
+        name: '',
+        email: '',
+        address: '',
+        dob: '',
+        contact: '',
+        joiningDate: '',
+        role: 'Member',
+        userType: 'user',
+        image: null
+      })
+    }
+  
+
+  }, [initialData,open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

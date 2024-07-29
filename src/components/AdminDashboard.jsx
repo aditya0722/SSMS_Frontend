@@ -8,11 +8,13 @@ import PieChartIcon from '@mui/icons-material/PieChart';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import {Link} from 'react-router-dom';
 import ProgressBar from './ProgressBar';
+import axios from "axios";
 
 const AdminDashboard = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dataset,setdataset]=useState({users:0,balance:0,blogs:0})
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -31,7 +33,20 @@ const AdminDashboard = () => {
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
+  useEffect(()=>{
+  const getdataset= async ()=>{
+      try{
+        const response= await axios.get("https://ssmss-backend.onrender.com/api/DashboardContant");
+        setdataset(response.data.data)
+      }
+      catch(e){
+        console.log(e)
+  
+      }
 
+    }
+    getdataset();
+  },[]);
   const data = [
     { country: 'Russia', area: '17,075,200', population: '146,899,754' },
     { country: 'France', area: '640,679', population: '64,979,548' },
@@ -59,7 +74,7 @@ const AdminDashboard = () => {
                 <PeopleIcon fontSize="large" sx={{ color: '#1976d2', mr: 2 }} />
                 <div>
                   <Typography variant="h6">No. of Members</Typography>
-                  <Typography variant="h5">150</Typography>
+                  <Typography variant="h5" textAlign={"center"}>{dataset.users}</Typography>
                 </div>
               </Paper>
               </Link>
@@ -71,7 +86,7 @@ const AdminDashboard = () => {
                 <AccountBalanceIcon fontSize="large" sx={{ color: '#1976d2', mr: 2 }} />
                 <div>
                   <Typography variant="h6">Total Balance</Typography>
-                  <Typography variant="h5">$25,000</Typography>
+                  <Typography variant="h5" textAlign={"center"}>{dataset.balance}</Typography>
                 </div>
               </Paper>
               </Link>
@@ -82,7 +97,7 @@ const AdminDashboard = () => {
                 <BarChartIcon fontSize="large" sx={{ color: '#1976d2', mr: 2 }} />
                 <div>
                 <Typography variant="h6">Blog Report</Typography>
-                <Typography variant="h5">25</Typography>
+                <Typography variant="h5" textAlign={"center"}>{dataset.blogs}</Typography>
                 </div>
               </Paper>
               </Link>

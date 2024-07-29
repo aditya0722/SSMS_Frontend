@@ -55,6 +55,15 @@ const AccountManagement = () => {
         };
       }, []);
 
+
+
+      
+
+      
+
+
+
+
     const toggleSidebar = () => {
         setIsSidebarCollapsed(!isSidebarCollapsed);
     };
@@ -130,6 +139,7 @@ const AccountManagement = () => {
             try{
                 await axios.post("https://ssmss-backend.onrender.com/api/addTransaction",transaction);
                 console.log("success");
+                
                 const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 setSnackbar({ open: true, message: 'Transaction Added Successfully!', severity: 'success' });
@@ -311,6 +321,7 @@ const AccountManagement = () => {
                                         <TableCell>Amount</TableCell>
                                         <TableCell>Category</TableCell>
                                         <TableCell>Date</TableCell>
+                                        <TableCell>Balance</TableCell>
                                         <TableCell>Member</TableCell>
                                         <TableCell>Actions</TableCell>
                                     </TableRow>
@@ -322,6 +333,7 @@ const AccountManagement = () => {
                                             <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>{transaction.ammount}</TableCell>
                                             <TableCell>{transaction.category}</TableCell>
                                             <TableCell>{transaction.date}</TableCell>
+                                            <TableCell>{transaction.balance}</TableCell>
                                             <TableCell>{transaction.name}</TableCell>
                                             <TableCell>
                                                 <IconButton onClick={() => handleEditTransaction(transaction)}>

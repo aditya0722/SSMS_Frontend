@@ -23,6 +23,7 @@ import Users from './components/Users';
 import UserBlogManagement from './components/UserBlockManagement';
 import UserAccountManagement from './components/UserAccountManagement';
 import UserStoreManagenemt from './components/UserStoreManagement';
+import ItemsReceiptManagement from './components/ItemsReceiptManagement';
 function App() {
 
 
@@ -46,6 +47,7 @@ function App() {
       <Route path="/UserBlogManagement" element={<UserBlogManagement/>}/>
       <Route path="/UserAccountManagement" element={<UserAccountManagement/>}/>
       <Route path="/UserStoreManagenemt" element={<UserStoreManagenemt/>}/>
+      <Route path="/ReceiptManagement" element={<ItemsReceiptManagement/>}/>
     </Routes>
     <Footer/>
   </>
