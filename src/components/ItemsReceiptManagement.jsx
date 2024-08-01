@@ -5,13 +5,25 @@ import ReceiptForm from './ReceiptForm';
 import ProgressBar from './ProgressBar';
 import Spinner from './Spinner';
 import ConfirmDialog from './ConfirmDialog';
-import { Container, TableCell, TableBody, Typography, TableRow, TableContainer, Table, TableHead, Snackbar, Alert, Dialog, DialogActions, Button, Card, CardContent, CardActions, DialogTitle, DialogContent, Paper, TextField, IconButton, InputAdornment } from '@mui/material';
+import { Container, TableCell, TableBody, Typography, TableRow, TableContainer, Table, TableHead, Snackbar, Alert, Dialog, DialogActions, Button, Card, CardContent, CardActions, DialogTitle, DialogContent, Paper, TextField, IconButton, Box } from '@mui/material';
 import { Add, Visibility, Delete, AddCircle, RemoveCircle } from '@mui/icons-material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import axios from 'axios';
 
 const initialReceipts = [
-    { id: 1, items: [{ name: 'Plate', price: 10, quantity: 30, broken: 2 }, { name: 'Chair', price: 50, quantity: 50, broken: 1 }], status: 'Pending' },
+    {
+        id: 1,
+        name: "Aditya Sharma",
+        address: "Gelling",
+        contactNumber: "382189",
+        totalAmount: 3200,
+        status: "Returned",
+        items: [
+            { name: 'Plate', price: 10, quantity: 30, broken: 2, checked: true },
+            { name: 'Glass', price: 10, quantity: 30, broken: 2, checked: true }
+        ]
+    }
 ];
 
 const ItemsReceiptManagement = () => {
@@ -27,8 +39,10 @@ const ItemsReceiptManagement = () => {
     const [receiptToDelete, setReceiptToDelete] = useState(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [selectedReceipt, setSelectedReceipt] = useState(null);
-    const [isReturnDialogOpen, setIsReturnDialogOpen] = useState(false);
     const [returnDetails, setReturnDetails] = useState({});
+    const [mainID,setmainID] = useState("")
+    const [isReturned,setisReturned]=useState();
+    const [isreceiptReturned,setisreceiptReturned]=useState(false)
 
     useEffect(() => {
         const handleResize = () => {
@@ -44,6 +58,25 @@ const ItemsReceiptManagement = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+    useEffect(()=>{
+        const getAllReceipt=async()=>{
+            try{
+                setLoading(true)
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                setReceipts(response.data)
+                
+
+            }
+            catch(e){
+                console.log(e)
+            }
+            finally{
+                setLoading(false)
+            }
+            
+        }
+        getAllReceipt();
+    },[])
 
     const toggleSidebar = () => {
         setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -57,12 +90,33 @@ const ItemsReceiptManagement = () => {
     const closeForm = () => {
         setFormInitialData(null);
         setIsFormOpen(false);
+
+    };
+    const closeConfirmDialog = () => {
+        
+        setIsConfirmOpen(false);
     };
 
-    const handleAddReceipt = (receipt) => {
-        setReceipts([...receipts, { ...receipt, id: receipts.length + 1 }]);
-        setSnackbar({ open: true, message: 'Receipt added successfully', severity: 'success' });
-        closeForm();
+
+    const handleAddReceipt = async (receipt) => {
+        console.log(receipt)
+        try{
+            setLoading(true)
+            await axios.post("https://ssmss-backend.onrender.com/api/savereceipt",receipt)
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                setReceipts(response.data)
+            setSnackbar({ open: true, message: 'Receipt added successfully', severity: 'success' });
+            
+        }
+        catch(error){
+            console.log(error)
+            setSnackbar({ open: true, message: 'Internal Server Error', severity: 'error' });
+        }
+        finally{
+            setLoading(false)
+            closeForm();
+        }
+        
     };
 
     const handleUpdateReceipt = (updatedReceipt) => {
@@ -71,14 +125,42 @@ const ItemsReceiptManagement = () => {
         closeForm();
     };
 
-    const handleDeleteReceipt = () => {
-        setReceipts(receipts.filter(r => r.id !== receiptToDelete));
-        setSnackbar({ open: true, message: 'Receipt deleted successfully', severity: 'success' });
-        setIsConfirmOpen(false);
+    const handleDeleteReceipt = async () => {
+        console.log(receiptToDelete)
+        let id =receiptToDelete;
+        try{
+            setLoading(true)
+            await 
+            axios.delete(`https://ssmss-backend.onrender.com/api/deletereceipt/${id}`)
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                setReceipts(response.data)
+            setSnackbar({ open: true, message: 'Receipt deleted successfully', severity: 'success' });
+        }
+        catch(error){
+            console.log(error)
+            setSnackbar({ open: true, message: 'Error Please Try Again!', severity: 'error' });
+        }
+        finally{
+            setLoading(false)
+            setIsConfirmOpen(false);
+        }
+       
+        
+        
     };
 
     const openDetailDialog = (receipt) => {
         setSelectedReceipt(receipt);
+        setReturnDetails(receipt.items.reduce((acc, item) => ({
+            ...acc,
+            [item.name]: { broken: item.broken, checked: item.checked }
+        }), {}));
+        if(receipt.status==="Returned"){
+            setisreceiptReturned(true)
+        }
+        else{
+            setisreceiptReturned(false)
+        }
         setIsDetailOpen(true);
     };
 
@@ -87,7 +169,7 @@ const ItemsReceiptManagement = () => {
         setIsDetailOpen(false);
     };
 
-    const handleReturnDetailsChange = (itemName, field, value) => {
+    const handleReturnDetailsChange = ( id,itemName,field, value) => {
         setReturnDetails(prev => ({
             ...prev,
             [itemName]: {
@@ -95,273 +177,376 @@ const ItemsReceiptManagement = () => {
                 [field]: value
             }
         }));
+        setmainID(id)
+    
     };
+    
+    const handleIncrementBroken = (itemName) => {
+        setReturnDetails((prev) => {
+            // Find the item in the selectedReceipt.items array
+            const item = selectedReceipt.items.find(i => i.name === itemName);
+    
+            // Ensure the item exists in the selectedReceipt
+            if (!item) {
+                console.warn(`Item "${itemName}" not found in selectedReceipt.items.`);
+                return prev; // No update if the item doesn't exist in selectedReceipt.items
+            }
+    
+            const currentBroken = prev[itemName]?.broken || 0;
+            const itemQuantity = item.quantity || 0;
+    
+            if (currentBroken < itemQuantity) {
+                return {
+                    ...prev,
+                    [itemName]: {
+                        ...prev[itemName],
+                        broken: currentBroken + 1
+                    }
+                };
+            }
+    
+            return prev; // No update if the broken count is not less than the quantity
+        });
+    };
+    
+    
 
-    const handleIncrement = (itemName) => {
+    const handleDecrementBroken = (itemName) => {
         setReturnDetails(prev => ({
             ...prev,
             [itemName]: {
                 ...prev[itemName],
-                quantity: (prev[itemName]?.quantity || 0) + 1
+                broken: Math.max((prev[itemName]?.broken || 0) - 1, 0)
             }
         }));
     };
 
-    const handleDecrement = (itemName) => {
-        setReturnDetails(prev => ({
-            ...prev,
-            [itemName]: {
-                ...prev[itemName],
-                quantity: Math.max((prev[itemName]?.quantity || 0) - 1, 0)
-            }
+    const handleSubmitReturnDetails = async () => {
+        if (!selectedReceipt) return;
+      
+        const updatedItems = selectedReceipt.items.map(item => ({
+          ...item,
+          broken: returnDetails[item.name]?.broken || item.broken,
+          checked: returnDetails[item.name]?.checked !== undefined ? returnDetails[item.name]?.checked : item.checked
         }));
+      
+        const updatedReceipt = {
+          ...selectedReceipt,
+          items: updatedItems,
+          status: 'Returned' 
+        };
+    
+        try {
+            setLoading(true)
+          await axios.put(`https://ssmss-backend.onrender.com/api/updatereceipt/${selectedReceipt._id}`, updatedReceipt);
+          const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                setReceipts(response.data)
+          setSnackbar({ open: true, message: 'Return details submitted successfully', severity: 'success' });
+        } catch (error) {
+          console.log(error);
+          setSnackbar({ open: true, message: 'Failed to submit return details', severity: 'error' });
+        } finally {
+            setLoading(false)
+          closeDetailDialog();
+        }
+      };
+      
+
+    const calculateBrokenCost = () => {
+        if (!selectedReceipt) return 0;
+        return selectedReceipt.items.reduce((total, item) => {
+            const brokenCount = returnDetails[item.name]?.broken || item.broken;
+            return total + (brokenCount * item.price);
+        }, 0);
     };
 
-    const handleReturnDialogOpen = () => {
-        setIsReturnDialogOpen(true);
+    const calculateGrandTotal = () => {
+        if (!selectedReceipt) return 0;
+    
+        // Convert values to numbers to ensure correct arithmetic operation
+        const rentCost = parseFloat(selectedReceipt.totalAmount) || 0;
+        const brokenCost = calculateBrokenCost() || 0;
+    
+        return rentCost + brokenCost;
     };
 
-    const handleReturnDialogClose = () => {
-        setIsReturnDialogOpen(false);
-    };
 
-    const handleSubmitReturnDetails = () => {
-        // Logic to process return details
-        console.log('Return Details Submitted:', returnDetails);
-        handleReturnDialogClose();
-    };
+    
 
+
+
+    
     const generatePDF = (receipt) => {
         const doc = new jsPDF();
-
+    
         // Title
         doc.setFontSize(18);
         doc.setTextColor(40, 116, 166); // Set text color to blue
-        doc.text('Samsing Sawali Manav Sanskar Samiti', 20, 20);
-
+        doc.text('Samsing Sawali Manav Sanskar Samiti', 105, 20, null, null, 'center');
+    
         // Receipt ID
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0); // Set text color to black
-        doc.text(`Receipt ID: ${receipt.id}`, 20, 30);
-
+        doc.text(`Receipt ID: ${receipt._id}`, 20, 30);
+    
         // Line Separator
         doc.setLineWidth(0.5);
         doc.line(20, 35, 190, 35); // Horizontal line
-
+    
+        // User Details
+        doc.setFontSize(12);
+        doc.text(`Name: ${receipt.name}`, 20, 40);
+        doc.text(`Address: ${receipt.address}`, 20, 45);
+        doc.text(`Contact Number: ${receipt.contactNumber}`, 20, 50);
+        doc.text(`Status: ${receipt.status}`, 20, 55);
+    
+        // Line Separator
+        doc.setLineWidth(0.5);
+        doc.line(20, 60, 190, 60); // Horizontal line
+    
         // Table Headers
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0); // Set text color to black
-        doc.text('Item Name', 20, 40);
-        doc.text('Quantity', 80, 40);
-        doc.text('Price', 120, 40);
-        doc.text('Broken', 160, 40);
-
+        doc.text('Item Name', 20, 65);
+        doc.text('Quantity', 80, 65);
+        doc.text('Price', 120, 65);
+        doc.text('Broken', 160, 65);
+    
         // Line Separator
         doc.setLineWidth(0.5);
-        doc.line(20, 45, 190, 45); // Horizontal line
-
+        doc.line(20, 70, 190, 70); // Horizontal line
+    
         // Table Content
-        let yPos = 50;
+        let yPos = 75;
+        let brokenPrice = 0;
         receipt.items.forEach((item) => {
+            const itemPrice = parseFloat(item.price) || 0;
+            const itemBroken = parseFloat(item.broken) || 0;
+    
             doc.setTextColor(0, 0, 0); // Set text color to black
             doc.text(item.name, 20, yPos);
-            doc.text(item.quantity.toString(), 80, yPos);
-            doc.text(item.price.toString(), 120, yPos);
-            doc.text(item.broken.toString(), 160, yPos);
-
+            doc.text(item.quantity.toString(), 80, yPos, null, null, 'right');
+            doc.text(itemPrice.toFixed(2), 120, yPos, null, null, 'right');
+            doc.text(itemBroken.toString(), 160, yPos, null, null, 'right');
+    
+            // Calculate broken price
+            brokenPrice += itemPrice * itemBroken;
+    
             // Line Separator for each row
             doc.setLineWidth(0.2);
             doc.line(20, yPos + 5, 190, yPos + 5); // Horizontal line
-
+    
             yPos += 10;
         });
-
+    
         // Total Calculation
-        const total = receipt.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-
+        const rentCost = parseFloat(receipt.totalAmount) || 0;
+        const brokenCost = brokenPrice || 0;
+        const grandTotal = rentCost + brokenCost;
+    
         // Line Separator
         doc.setLineWidth(0.5);
         doc.line(20, yPos + 5, 190, yPos + 5); // Horizontal line
-
-        // Total Amount
+    
+        // Total Amounts
+        yPos += 10;
         doc.setFontSize(14);
         doc.setTextColor(255, 0, 0); // Set text color to red
-        doc.text(`Total: ${total}`, 20, yPos + 15);
-
+        doc.text(`Total Rent: ${rentCost.toFixed(2)}`, 20, yPos);
+        doc.text(`Total Broken Items Cost: ${brokenCost.toFixed(2)}`, 20, yPos + 10);
+        doc.text(`Grand Total: ${grandTotal.toFixed(2)}`, 20, yPos + 20);
+    
+        // Additional Note
+        yPos += 35;
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0); // Set text color to black
+        doc.text('Note:', 20, yPos);
+        doc.setFontSize(10);
+        doc.text('This receipt does not require a signature.', 20, yPos + 5);
+    
         // Save PDF
-        doc.save(`receipt_${receipt.id}.pdf`);
+        doc.save(`receipt_${receipt.name}.pdf`);
     };
+    
 
+    
     return (
         <>
-            <Spinner loading={loading} />
-            <ProgressBar loading={progressLoading} />
-            <AdminNav toggleSidebar={toggleSidebar} />
-            <div style={{ display: 'flex' }}>
-                <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
-                    <SidebarMenu collapsed={isSidebarCollapsed} />
-                </div>
-                <Container sx={{ minHeight: "100vh" }}>
-                    <Typography variant="h3" gutterBottom>Receipt Management Page</Typography>
-                    <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => openForm()}>
-                        Add Receipt
-                    </Button>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-                        {receipts.map(receipt => (
-                            <Card key={receipt.id} style={{ width: '300px', margin: '10px' }}>
-                                <CardContent>
-                                    <Typography variant="h5" component="div">Receipt {receipt.id}</Typography>
-                                    <Typography variant="body2" color="textSecondary">Status: {receipt.status}</Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <Button size="small" color="primary" startIcon={<Visibility />} onClick={() => openDetailDialog(receipt)}>
-                                        View Details
-                                    </Button>
-                                    <Button size="small" color="secondary" startIcon={<Delete />} onClick={() => { setReceiptToDelete(receipt.id); setIsConfirmOpen(true); }}>
-                                        Delete
-                                    </Button>
-                                </CardActions>
-                            </Card>
-                        ))}
-                    </div>
 
-                    {/* Return Details Dialog */}
-                    <Dialog open={isReturnDialogOpen} onClose={handleReturnDialogClose}>
-                        <DialogTitle>Return Details</DialogTitle>
-                        <DialogContent>
-                    {selectedReceipt && (
-                        <Paper style={{ padding: '20px' }}>
-                            <Typography variant="h6" align="center" gutterBottom style={{ color: '#00396b' }}>
-                                Samsing Sawali Manav Sanskar Samiti
-                            </Typography>
-                            <Typography variant="subtitle1">Receipt ID: {selectedReceipt.id}</Typography>
-                            <Typography variant="body2" color="textSecondary">Status: {selectedReceipt.status}</Typography>
-                            <hr />
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow style={{ backgroundColor: '#f0f0f0' }}>
-                                            <TableCell align="center"><strong>Item Name</strong></TableCell>
-                                            <TableCell align="center"><strong>Quantity</strong></TableCell>
-                                            <TableCell align="center"><strong>Price</strong></TableCell>
-                                            <TableCell align="center"><strong>Broken</strong></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {selectedReceipt.items
-                                            .filter(item => selectedReceipt.status !== 'Pending' || item.broken > 0)
-                                            .map((item, index) => (
-                                                <TableRow key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff' }}>
-                                                    <TableCell align="center">{item.name}</TableCell>
-                                                    <TableCell align="center">{item.quantity}</TableCell>
-                                                    <TableCell align="center">{item.price}</TableCell>
-                                                    <TableCell align="center"> <TextField
-                                        label="Quantity"
-                                        type="number"
-                                        value={returnDetails[item.name]?.broken || 0}
-                                        onChange={(e) => handleReturnDetailsChange(item.name, 'quantity', parseInt(e.target.value))}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton onClick={() => handleIncrement(item.name)}><AddCircle /></IconButton>
-                                                    <IconButton onClick={() => handleDecrement(item.name)}><RemoveCircle /></IconButton>
-                                                </InputAdornment>
-                                            )
-                                        }}
-                                    /></TableCell>
-                                                </TableRow>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <hr />
-                            <Typography variant="h6" align="right" style={{ marginTop: '10px', color: '#00396b' }}>
-                                Total: {selectedReceipt.items.reduce((total, item) => total + (item.price * item.quantity), 0)}
-                            </Typography>
-                            
-                        </Paper>
-                    )}
-                </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleReturnDialogClose} color="primary">Cancel</Button>
-                            <Button onClick={handleSubmitReturnDetails} color="primary">Submit</Button>
-                        </DialogActions>
-                    </Dialog>
-
-                    {/* Form Component */}
-                    {isFormOpen && (
-                        <ReceiptForm
-                            initialData={formInitialData}
-                            onClose={closeForm}
-                            onSave={formInitialData ? handleUpdateReceipt : handleAddReceipt}
-                        />
-                    )}
-
-                    {/* Confirm Dialog */}
-                    <ConfirmDialog
-                        open={isConfirmOpen}
-                        onClose={() => setIsConfirmOpen(false)}
-                        onConfirm={handleDeleteReceipt}
-                        title="Delete Receipt"
-                        message="Are you sure you want to delete this receipt?"
-                    />
-
-                    {/* Details Dialog */}
-                   <Dialog open={isDetailOpen} onClose={closeDetailDialog} fullWidth maxWidth="sm">
-                <DialogTitle>Receipt Details</DialogTitle>
-                <DialogContent>
-                    {selectedReceipt && (
-                        <Paper style={{ padding: '20px' }}>
-                            <Typography variant="h6" align="center" gutterBottom style={{ color: '#00396b' }}>
-                                Samsing Sawali Manav Sanskar Samiti
-                            </Typography>
-                            <Typography variant="subtitle1">Receipt ID: {selectedReceipt.id}</Typography>
-                            <Typography variant="body2" color="textSecondary">Status: {selectedReceipt.status}</Typography>
-                            <hr />
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow style={{ backgroundColor: '#f0f0f0' }}>
-                                            <TableCell align="center"><strong>Item Name</strong></TableCell>
-                                            <TableCell align="center"><strong>Quantity</strong></TableCell>
-                                            <TableCell align="center"><strong>Price</strong></TableCell>
-                                            <TableCell align="center"><strong>Broken</strong></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {selectedReceipt.items
-                                            .filter(item => selectedReceipt.status !== 'Pending' || item.broken > 0)
-                                            .map((item, index) => (
-                                                <TableRow key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff' }}>
-                                                    <TableCell align="center">{item.name}</TableCell>
-                                                    <TableCell align="center">{item.quantity}</TableCell>
-                                                    <TableCell align="center">{item.price}</TableCell>
-                                                    <TableCell align="center">{item.broken}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <hr />
-                            <Typography variant="h6" align="right" style={{ marginTop: '10px', color: '#00396b' }}>
-                                Total: {selectedReceipt.items.reduce((total, item) => total + (item.price * item.quantity), 0)}
-                            </Typography>
-                            {selectedReceipt.status === 'Pending' && (
-                                <Button variant="contained" color="secondary" onClick={handleReturnDialogOpen} style={{ marginTop: '10px' }}>
-                                    Return
-                                </Button>
-                            )}
-                        </Paper>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeDetailDialog} color="primary">Close</Button>
-                    <Button onClick={() => generatePDF(selectedReceipt)} color="primary">Download as PDF</Button>
-                </DialogActions>
-            </Dialog>
-                </Container>
+         <Spinner loading={loading}/>
+        <AdminNav toggleSidebar={toggleSidebar} />
+        <ProgressBar loading={loading}/>
+        <ReceiptForm
+                open={isFormOpen}
+                initialData={formInitialData}
+                onClose={closeForm}
+                onSave={formInitialData ? handleUpdateReceipt : handleAddReceipt}
+        />
+        <div style={{ display: 'flex' }}>
+            <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
+                <SidebarMenu collapsed={isSidebarCollapsed} />
             </div>
-        </>
+            <Container sx={{ minHeight: "100vh" }}>
+                <Typography variant="h3" gutterBottom>Receipt Management Page</Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => openForm()}
+                    startIcon={<Add />}
+                >
+                    Add Receipt
+                </Button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
+                    {receipts.map(receipt => (
+                        <Card key={receipt.id} style={{ width: '350px', margin: '10px', background: receipt.status === 'Taken' ? '#C8E6C9' : '#FFF69B' }}>
+                            <CardContent>
+                                <Box>
+                                    <Typography variant="h4"><b>{receipt.name}</b></Typography><br />
+                                    <Typography variant="h6"><b>Address: </b>{receipt.address}</Typography>
+                                    <Typography variant="h6"><b>Contact: </b>{receipt.contactNumber}</Typography>
+                                    <Typography variant="h6"><b>Total Amount: </b>{receipt.totalAmount}</Typography>
+                                </Box>
+                                <Typography variant="body2" color="textSecondary">Status: {receipt.status}</Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button
+                                    size="small"
+                                    color="primary"
+                                    startIcon={<Visibility />}
+                                    onClick={() => openDetailDialog(receipt)}
+                                >
+                                    Details
+                                </Button>
+                                <Button
+                                    size="small"
+                                    color="secondary"
+                                    startIcon={<Delete />}
+                                    onClick={() => {
+                                        setReceiptToDelete(receipt._id);
+                                        setIsConfirmOpen(true);
+                                    }}
+                                >
+                                    Delete
+                                </Button>
+                                <Button
+                                    size="small"
+                                    color="primary"
+                                    onClick={() => generatePDF(receipt)}
+                                    startIcon={<Add />}
+                                    style={{ marginLeft: 'auto' }}
+                                >
+                                    Download
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    ))}
+                </div>
+            </Container>
+        </div>
+        <ConfirmDialog open={isConfirmOpen} 
+        handleClose={closeConfirmDialog} 
+        handleConfirm={handleDeleteReceipt} 
+        title="Delete Receipt" 
+        description="Are you sure you want to delete this Receipt?" />
+        
+        <Dialog open={isDetailOpen} onClose={closeDetailDialog} maxWidth="md" fullWidth>
+            <DialogTitle style={{ backgroundColor: '#1976d2', color: 'white' }}>Receipt Details</DialogTitle>
+            <DialogContent style={{ backgroundColor: '#e3f2fd' }}>
+                {selectedReceipt && (
+                    <>
+                        <Typography variant="h5" gutterBottom color="primary" mt={3}>
+                            Samsing Sawali Manav Sanskar Samiti
+                        </Typography>
+                        <Box style={{ padding: '16px', borderRadius: '8px' }}>
+                            <Typography variant="h6" gutterBottom color="primary">
+                                {`Receipt ID: ${selectedReceipt._id}`}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom color="textPrimary">
+                                {`Name: ${selectedReceipt.name}`}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom color="textPrimary">
+                                {`Address: ${selectedReceipt.address}`}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom color="textPrimary">
+                                {`Contact Number: ${selectedReceipt.contactNumber}`}
+                            </Typography>
+                        </Box>
+                        <TableContainer component={Paper} style={{ marginTop: '16px', backgroundColor: '#ffffff' }}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Item Name</TableCell>
+                                        <TableCell>Quantity</TableCell>
+                                        <TableCell>Price</TableCell>
+                                        <TableCell>Broken</TableCell>
+                                        <TableCell>Check</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {selectedReceipt.items.map((item) => (
+                                        <TableRow key={item.name}>
+                                            <TableCell>{item.name}</TableCell>
+                                            <TableCell>{item.quantity}</TableCell>
+                                            <TableCell>{item.price}</TableCell>
+                                            <TableCell>
+                                                
+                                                    <div classNmae='md: flex'>
+                                                        {!isreceiptReturned && (
+                                                        <IconButton onClick={() => handleIncrementBroken(item.name)} color="primary">
+                                                            <AddCircle />
+                                                        </IconButton>
+                                                        )}
+                                                        {returnDetails[item.name]?.broken || item.broken}
+                                                        {!isreceiptReturned && (
+                                                        <IconButton onClick={() => handleDecrementBroken(item.name)} color="secondary">
+                                                            <RemoveCircle />
+                                                        </IconButton>
+                                                         )}
+                                                    </div>
+                                              
+                                            </TableCell>
+                                            <TableCell>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={returnDetails[item.name]?.checked || item.checked}
+                                                    onChange={(e) => handleReturnDetailsChange(selectedReceipt._id,item.name, 'checked', e.target.checked)}
+                                                    className="h-6 w-6"
+                                                    disabled={isReturned} // Disable checkbox if status is 'Returned'
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box style={{ padding: '16px', borderRadius: '8px', marginTop: '16px' }}>
+                            <Typography variant="body1" gutterBottom sx={{ color: "red" }}>
+                                {`Total Broken Items Cost: ${calculateBrokenCost()}`}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom color="primary">
+                                {`Grand Total: ${calculateGrandTotal()}`}
+                            </Typography>
+                        </Box>
+                    </>
+                )}
+            </DialogContent>
+            <DialogActions className="text-blue-600">
+                <Button onClick={closeDetailDialog} style={{ color: 'blue' }}>
+                    Cancel
+                </Button>
+                {!isreceiptReturned && (
+                    <Button onClick={handleSubmitReturnDetails} style={{ color: 'red' }}>
+                        Submit
+                    </Button>
+                )}
+            </DialogActions>
+        </Dialog>
+        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+            <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+                {snackbar.message}
+            </Alert>
+        </Snackbar>
+    </>
     );
 };
 
