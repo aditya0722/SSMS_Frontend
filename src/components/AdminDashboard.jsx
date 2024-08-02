@@ -36,7 +36,7 @@ const AdminDashboard = () => {
   useEffect(()=>{
   const getdataset= async ()=>{
       try{
-        const response= await axios.get("https://ssmss-backend.onrender.com/api/DashboardContant");
+        const response= await axios.get("http://localhost:3000/api/DashboardContant");
         setdataset(response.data.data)
       }
       catch(e){
