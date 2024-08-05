@@ -29,7 +29,7 @@ const StoreManagement = () => {
         const fetchItems = async () => {
             setProgressLoading(true);
             try {
-                const response = await axios.get("http://localhost:3000/api/store");
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
                 if (isMounted) {
                     setProducts(response.data);
                     setProgressLoading(false);
@@ -86,14 +86,14 @@ const StoreManagement = () => {
         try {
             if (productId!=null) {
                 console.log("udpade")
-                await axios.put(`http://localhost:3000/api/updateItem/${product._id}`, product);
+                await axios.put(`https://ssmss-backend.onrender.com/api/updateItem/${product._id}`, product);
                 setSnackbar({ open: true, message: 'Item Updated Successfully!', severity: 'success' });
             } else {
                 console.log("insert")
-                await axios.post("http://localhost:3000/api/addItem", product);
+                await axios.post("https://ssmss-backend.onrender.com/api/addItem", product);
                 setSnackbar({ open: true, message: 'Item Added Successfully!', severity: 'success' });
             }
-            const response = await axios.get("http://localhost:3000/api/store");
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
             setProducts(response.data);
         } catch (e) {
             console.error(e);
@@ -126,8 +126,8 @@ const StoreManagement = () => {
     const handleDelete = async () => {
         setLoading(true);
         try {
-            await axios.delete(`http://localhost:3000/api/deleteItem/${deleteId}`);
-            const response = await axios.get("http://localhost:3000/api/store");
+            await axios.delete(`https://ssmss-backend.onrender.com/api/deleteItem/${deleteId}`);
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
             setProducts(response.data);
             setSnackbar({ open: true, message: 'Item Deleted Successfully!', severity: 'success' });
         } catch (e) {

@@ -6,7 +6,7 @@ const  Members= () => {
   
   const [users, setUsers] = useState([]);
       useEffect(() => {
-        axios.get("http://localhost:3000/api/api/login/members")
+        axios.get("https://ssmss-backend.onrender.com/api/api/login/members")
           .then((res) => {
             setUsers(res.data);
           })

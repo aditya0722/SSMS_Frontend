@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MenuItem, Select, Snackbar,Box,Container, Alert, Checkbox, FormControlLabel } from '@mui/material';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { MenuItem, Select, Snackbar, Box, Container, Alert, Checkbox, FormControlLabel } from '@mui/material';
 import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
 import ProgressBar from './ProgressBar';
@@ -30,17 +30,16 @@ const AttendanceManagement = () => {
     };
   }, []);
 
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
         setLoading(true);
         const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
-        // Transform the data to an array of member objects
-        const memberList = data.map(member => ({
-          id: member._id, // assuming the backend returns member IDs
-          name: member.name,
-        }));
-        setMembers(memberList);
+        setMembers(data.map(member => ({ id: member._id, name: member.name })));
       } catch (error) {
         console.error("Error fetching members data:", error);
       } finally {
@@ -51,48 +50,113 @@ const AttendanceManagement = () => {
     getData();
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-  const saveAttendanceData = async (attendanceData) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get("https://ssmss-backend.onrender.com/api/getalldata");
+        const { attendance, fees } = data;
+
+        const updatedData = {};
+
+        attendance.forEach(item => {
+          const memberId = item.memberId;
+          const date = new Date(item.date).toISOString().split('T')[0];
+
+          if (!updatedData[memberId]) {
+            updatedData[memberId] = {};
+          }
+          updatedData[memberId][date] = {
+            status: item.status,
+            finePaid: item.finePaid || false
+          };
+        });
+
+        fees.forEach(item => {
+          const memberId = item.memberId;
+          const date = new Date(item.date).toISOString().split('T')[0];
+
+          if (!updatedData[memberId]) {
+            updatedData[memberId] = {};
+          }
+          if (!updatedData[memberId][date]) {
+            updatedData[memberId][date] = {};
+          }
+          updatedData[memberId][date].feePaid = item.status;
+          updatedData[memberId][date].amount = item.amount || 0;
+          updatedData[memberId][date].fine = item.fine || false
+        });
+
+        setData(updatedData);
+        console.log("updatedata", data)
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+  const saveAttendanceData = async (memberId, date, fine, type) => {
+    console.log("value ", memberId, date, fine, type)
+
     try {
-      setLoading(true);
-      await axios.post('https://ssmss-backend.onrender.com/api/attendance', attendanceData);
-      setSnackbar({ open: true, message: 'Data saved successfully', severity: 'success' });
+      if (type === "fine") {
+        await axios.post("https://ssmss-backend.onrender.com/api/UpdateAttandanceFine", {
+          memberId, date
+        })
+      } else {
+        await axios.post("https://ssmss-backend.onrender.com/api/updateMothlyFee", {
+          memberId, date
+        })
+      }
+
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error saving data', severity: 'error' });
-      console.error('Error saving attendance data:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error saving data:', error);
     }
   };
 
+  const parseAndFormatDate = useCallback(dateStr => {
+    const [month, day, year] = dateStr.split('/');
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }, []);
+
   const handleChange = async (memberId, date, type, value) => {
+    const newDate = parseAndFormatDate(date);
+    console.log("type", memberId, date, type, value)
+
+    setData(prevData => ({
+      ...prevData,
+      [memberId]: {
+        ...prevData[memberId],
+        [newDate]: {
+          ...prevData[memberId]?.[newDate],
+          [type]: value,
+        },
+      },
+    }));
+
     try {
       setLoading(true);
-      if (type === 'attendance') {
-        await axios.post("https://ssmss-backend.onrender.com/api/addAttandance", {
-          memberId,
-          date,
-          status: value,
-        });
-      } else if (type === 'fee') {
+       if (type === "feePaid") {
         await axios.post("https://ssmss-backend.onrender.com/api/addmonthlyfee", {
           memberId,
-          date,
+          newDate,
           status: value,
         });
       }
-      setData((prevData) => ({
-        ...prevData,
-        [memberId]: {
-          ...prevData[memberId],
-          [date]: {
-            ...prevData[memberId]?.[date],
-            [type]: value,
-          },
-        },
-      }));
+      else {
+        await axios.post("https://ssmss-backend.onrender.com/api/addAttandance", {
+          memberId,
+          newDate,
+          status: value,
+        });
+      }
       setSnackbar({ open: true, message: `${type.charAt(0).toUpperCase() + type.slice(1)} saved successfully`, severity: 'success' });
     } catch (error) {
       setSnackbar({ open: true, message: `Error saving ${type}`, severity: 'error' });
@@ -102,38 +166,63 @@ const AttendanceManagement = () => {
     }
   };
 
-  const handleCheckboxChange = (memberId, date, checked) => {
-    setData((prevData) => ({
-      ...prevData,
-      [memberId]: {
-        ...prevData[memberId],
-        [date]: {
-          ...prevData[memberId]?.[date],
-          fine: checked,
-        },
-      },
-    }));
-    saveAttendanceData({ memberId, date, type: 'fine', value: checked });
+  const handleCheckboxChange = (memberId, date, checked, type) => {
+
+    // const formattedDate = formatDate(date);
+    const finaldate = parseAndFormatDate(date)
+
+    setData(prevData => {
+      const memberData = prevData[memberId] || {};
+      const dateData = memberData[finaldate] || {};
+      console.log("value datedata", dateData)
+
+      let newFine = dateData.fine || 0;
+      let newFinePaid = dateData.finePaid || false;
+      let newFeePaid = dateData.feePaid || '';
+
+      if (type === 'fine') {
+        setData(prevData => ({
+          ...prevData,
+          [memberId]: {
+            ...prevData[memberId],
+            [date]: {
+              ...dateData.finePaid = true,
+            },
+          },
+        }));
+      } else if (type === 'lateFee') {
+        setData(prevData => ({
+          ...prevData,
+          [memberId]: {
+            ...prevData[memberId],
+            [date]: {
+              ...dateData.fine = 1,
+            },
+          },
+        }));
+      }
+
+    });
+
+    saveAttendanceData(memberId, finaldate, checked, type);
   };
 
-  const formatDate = (date) => {
+  const formatDate = useCallback(date => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-  };
+  }, []);
 
-  const getFirstSundays = (year) => {
+  const getFirstSundays = useMemo(() => {
     const firstSundays = [];
     for (let month = 0; month < 12; month++) {
-      const date = new Date(year, month, 1);
+      const date = new Date(new Date().getFullYear(), month, 1);
       const day = date.getDay();
-      const firstSunday = day === 0 ? date : new Date(year, month, 1 + (7 - day));
+      const firstSunday = day === 0 ? date : new Date(new Date().getFullYear(), month, 1 + (7 - day));
       firstSundays.push(firstSunday);
     }
     return firstSundays;
-  };
+  }, []);
 
-  const firstSundays = getFirstSundays(new Date().getFullYear());
-
-  const getCellColor = (value) => {
+  const getCellColor = useCallback(value => {
     switch (value) {
       case 'Present':
         return '#d4edda'; // light green
@@ -144,9 +233,9 @@ const AttendanceManagement = () => {
       default:
         return 'transparent';
     }
-  };
+  }, []);
 
-  const getFeeColor = (value) => {
+  const getFeeColor = useCallback(value => {
     switch (value) {
       case 'Paid':
         return '#d4edda'; // light green
@@ -155,80 +244,68 @@ const AttendanceManagement = () => {
       default:
         return 'transparent';
     }
-  };
+  }, []);
 
-  const calculateTotals = (memberId) => {
+  const calculateTotals = useCallback(memberId => {
     const memberData = data[memberId] || {};
     let totalDaysPresent = 0;
     let totalFees = 0;
 
     Object.values(memberData).forEach(record => {
-      if (record.attendance === 'Present') {
-        totalDaysPresent += 1;
-      } 
-        if (record.fine) {
-          totalFees += 100;
-        }
-      
-      if (record.fee === 'Paid') {
-        totalFees += 50;
-      }
-      if (record.fee === 'Late Paid') {
-        totalFees += 100;
-      }
+      if (record.status === 'Present') totalDaysPresent += 1;
+      if (record.fine) totalFees += record.fine;
+      if (record.feePaid === 'Paid' || record.feePaid === 'Late Paid') totalFees += record.amount;
     });
 
     return { totalDaysPresent, totalFees };
-  };
-  const calculateSummary = () => {
-    let totalFeeCollection = 0;
-    let totalAbsent = 0;
-    let totalPresent = 0;
-    let totalLateFeeCollection = 0;
-    let totalAbsentFeeCollection = 0;
-  
-    members.forEach(member => {
-      const memberData = data[member.id] || {};
-      Object.values(memberData).forEach(record => {
-        if (record.attendance === 'Present') {
-          totalPresent += 1;
-        } else if (record.attendance === 'Absent') {
-          totalAbsent += 1;
-          if (record.fine) {
-            totalAbsentFeeCollection += 100;
-          }
-        }
-  
-        if (record.fee === 'Paid') {
-          totalFeeCollection += 50;
-        } else if (record.fee === 'Late Paid') {
-          totalFeeCollection += 100;
-          totalLateFeeCollection += 100;
-        }
-      });
-    });
-  
-    return {
-      totalFeeCollection,
-      totalAbsent,
-      totalPresent,
-      totalLateFeeCollection,
-      totalAbsentFeeCollection
-    };
-  };
-  const summary = calculateSummary();
-  
+  }, [data]);
 
+  const calculateSummary = useCallback(selectedDate => {
+    const summary = {
+      totalPresent: 0,
+      totalAbsent: 0,
+      totalFees: 0,
+      totalLateFees: 0,
+      totalAbsentFees: 0,
+    };
+    const formattedDate = formatDate(selectedDate);
+    const finaldate = parseAndFormatDate(formattedDate)
+    console.log("selectedate", finaldate)
+    members.forEach(member => {
+
+
+
+      const memberData = data[member.id] || {};
+      const record = memberData[finaldate] || {};
+      console.log("record", record)
+      if (record.status === 'Present') summary.totalPresent += 1;
+      if (record.status === 'Absent') {
+        summary.totalAbsent += 1;
+        if (record.finePaid) summary.totalAbsentFees += 100;
+      }
+      if (record.feePaid === 'Paid') {
+        summary.totalFees += 50;
+      }
+      if (record.fine) {
+        summary.totalLateFees += 100;
+      }
+      if (record.feePaid === 'Late Paid') summary.totalFees += 50;
+    });
+
+    return summary;
+  }, [data, members, formatDate]);
+
+  const dates = getFirstSundays;
   return (
     <>
       <ProgressBar loading={loading} />
       <Spinner loading={loading} />
       <AdminNav toggleSidebar={toggleSidebar} />
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}`}>
+      <div className="flex min-h-screen">
+        <div className={`transition-transform duration-300  ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 myclass' : 'translate-x-0 '}`}>
           <SidebarMenu collapsed={isSidebarCollapsed} />
         </div>
-        <div style={{ flex: 1, padding: '10px', overflowX: 'auto' }}>
+        <Container style={{ flex: 1, padding: '10px', overflowX: 'auto' }}>
           <div>
             <Select
               value={selectedMonth}
@@ -238,7 +315,7 @@ const AttendanceManagement = () => {
                 '& .MuiSelect-icon': { display: 'none' } // Hides the dropdown icon
               }}
             >
-              {firstSundays.map((date, index) => (
+              {getFirstSundays.map((date, index) => (
                 <MenuItem key={index} value={index}>
                   {formatDate(date)}
                 </MenuItem>
@@ -249,54 +326,55 @@ const AttendanceManagement = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={{ position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap' }}>Member Name</th>
-                  {firstSundays.map((date, index) => (
-                    <th key={index} colSpan={3} style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>
+                  <th style={{ position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap'}}>
+                    Member Name
+                  </th>
+                  {getFirstSundays.map((date, index) => (
+                    <th key={index} colSpan={4} style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>
                       {formatDate(date)}
                       <div style={{ width: "100%", display: "flex", justifyContent: "space-evenly" }}>
-                        <div style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>
-                          Attendance
-                        </div>
-                        <div style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>
-                          Monthly Fee
-                        </div>
-                        <div style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>
-                          Fine
-                        </div>
+                        <div style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>Attendance</div>
+                        <div style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>Absent Fee</div>
+                        <div style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>Monthly Fee</div>
+                        <div style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap', width: "100%" }}>Late Fee</div>
                       </div>
                     </th>
                   ))}
-                  <th style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5' }}>Total Days Present</th>
-                  <th style={{ border: '1px solid #ddd', padding: '4px', backgroundColor: '#f5f5f5' }}>Total Fees</th>
+                  <th style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5' }}>Total Days Present</th>
+                  <th style={{ border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5' }}>Total Fees</th>
                 </tr>
               </thead>
               <tbody>
                 {members.map((member) => {
                   const totals = calculateTotals(member.id);
+
                   return (
-                    <>
                     <tr key={member.id}>
-                      <td style={{ position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '0px', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', backgroundColor: '#f5f5f5' }}>
+                      <td style={{ position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '0px', width: '100px',height:"30px", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', backgroundColor: '#f5f5f5' }}>
                         {member.name}
                       </td>
-                      
-                      {firstSundays.map((date, index) => {
+
+                      {getFirstSundays.map((date, index) => {
+
                         const formattedDate = formatDate(date);
-                        const cellData = data[member.id]?.[formattedDate] || {};
-                        const attendanceValue = cellData.attendance || '';
-                        const feeValue = cellData.fee || '';
-                        const fineValue = cellData.fine || false;
+                        const finaldate = parseAndFormatDate(formattedDate)
+                        const cellData = data[member.id]?.[finaldate] || {};
+                        const memberData = data[member.id];
+                        const attendanceValue = cellData.status || '';
+                        const feeValue = cellData.feePaid || '';
+                        const fineValue = cellData.fine;
+                        const finepaid = cellData.finePaid || false;
+                        console.log("celldata", cellData)
+
+
                         return (
                           <React.Fragment key={index}>
-                            <td style={{ border: '1px solid #ddd', padding: '0px', backgroundColor: getCellColor(attendanceValue) }}>
+                            <td style={{ width:'80px',height:"20px",border: '1px solid #ddd', backgroundColor: getCellColor(attendanceValue) }}>
                               <Select
                                 value={attendanceValue}
-                                onChange={(e) => handleChange(member.id, formattedDate, 'attendance', e.target.value)}
+                                onChange={(e) => handleChange(member.id, formattedDate, 'status', e.target.value)}
                                 displayEmpty
-                                style={{ width: '150px',height:"40px" }}
-                                sx={{
-                                  '& .MuiSelect-icon': { display: 'none' } // Hides the dropdown icon
-                                }}
+                                style={{ width: '100px', height: "30px" }}
                               >
                                 <MenuItem value="">Select</MenuItem>
                                 <MenuItem value="Present">Present</MenuItem>
@@ -304,28 +382,38 @@ const AttendanceManagement = () => {
                                 <MenuItem value="Leave">Leave</MenuItem>
                               </Select>
                             </td>
+                            <td style={{ border: '1px solid #ddd',width:"50px", padding: '0px', backgroundColor: getCellColor(attendanceValue) }}>
+                              {attendanceValue === 'Absent' && (
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={finepaid}
+                                      onChange={(e) => handleCheckboxChange(member.id, formattedDate, e.target.checked, 'fine')}
+                                    />
+                                  }
+                                  label="Paid"
+                                />
+                              )}
+                            </td>
                             <td style={{ border: '1px solid #ddd', padding: '0px', backgroundColor: getFeeColor(feeValue) }}>
                               <Select
                                 value={feeValue}
-                                onChange={(e) => handleChange(member.id, formattedDate, 'fee', e.target.value)}
+                                onChange={(e) => handleChange(member.id, formattedDate, 'feePaid', e.target.value)}
                                 displayEmpty
-                                style={{ width: '150px',height:"40px" }}
-                                sx={{
-                                  '& .MuiSelect-icon': { display: 'none' } // Hides the dropdown icon
-                                }}
+                                style={{ width: '100px', height: "30px" }}
                               >
                                 <MenuItem value="">Select</MenuItem>
                                 <MenuItem value="Paid">Paid</MenuItem>
                                 <MenuItem value="Late Paid">Late Paid</MenuItem>
                               </Select>
                             </td>
-                            <td style={{ border: '1px solid #ddd', padding: '0px', backgroundColor: '#fff' }}>
-                              {attendanceValue === 'Absent' && (
+                            <td style={{ border: '1px solid #ddd', padding: '0px', backgroundColor: getFeeColor(feeValue) }}>
+                              {feeValue === 'Late Paid' && (
                                 <FormControlLabel
                                   control={
                                     <Checkbox
                                       checked={fineValue}
-                                      onChange={(e) => handleCheckboxChange(member.id, formattedDate, e.target.checked)}
+                                      onChange={(e) => handleCheckboxChange(member.id, formattedDate, e.target.checked, 'lateFee')}
                                     />
                                   }
                                   label="Paid"
@@ -335,33 +423,28 @@ const AttendanceManagement = () => {
                           </React.Fragment>
                         );
                       })}
-                      <td style={{ border: '1px solid #ddd', padding: '4px' }}>{totals.totalDaysPresent}</td>
-                      <td style={{ border: '1px solid #ddd', padding: '4px' }}>{totals.totalFees}</td>
-                     
-
+                      <td style={{ border: '1px solid #ddd', padding: '0px' }}>{totals.totalDaysPresent}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '0px' }}>{totals.totalFees}</td>
                     </tr>
-                    
-                  </>
                   );
-                  
                 })}
                 <tr>
-                  <td style={{position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '0px', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', backgroundColor: '#f5f5f5' }}>Summary of Month</td>
-                  {firstSundays.map((date, index) => (
-                    <React.Fragment key={index}>
-                      <td colSpan={3} style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f5f5f5' }}>
-                        <Container sx={{ ml: '0px' }}>
-                          <Box>Total Fee Collection: {summary.totalFeeCollection}</Box>
-                          <Box>Total Absent: {summary.totalAbsent}</Box>
-                          <Box>Total Present: {summary.totalPresent}</Box>
-                          <Box>Total Late Fee Collection: {summary.totalLateFeeCollection}</Box>
-                          <Box>Total Absent Fee Collection: {summary.totalAbsentFeeCollection}</Box>
-                        </Container>
+                  <td style={{ position: 'sticky', left: 0, zIndex: 1, border: '1px solid #ddd', padding: '2px', backgroundColor: '#f5f5f5', whiteSpace: 'nowrap' }}>Monthly Summary</td>
+                  {getFirstSundays.map((date, index) => {
+                    const summary = calculateSummary(date)
+                    return (
+                      <td colSpan={4} key={index} style={{ border: '1px solid #ddd', padding: '0px', whiteSpace: 'nowrap' }}>
+                        <div>Total Present: {summary.totalPresent}</div>
+                        <div>Total Absent: {summary.totalAbsent}</div>
+                        <div>Total Fees: {summary.totalFees}</div>
+                        <div>Total Late Fees: {summary.totalLateFees}</div>
+                        <div>Total Absent Fees: {summary.totalAbsentFees}</div>
                       </td>
-                    </React.Fragment>
-                  ))}
+                    );
+                  })}
                 </tr>
               </tbody>
+
             </table>
           </div>
           <Snackbar
@@ -373,7 +456,7 @@ const AttendanceManagement = () => {
               {snackbar.message}
             </Alert>
           </Snackbar>
-        </div>
+        </Container>
       </div>
     </>
   );

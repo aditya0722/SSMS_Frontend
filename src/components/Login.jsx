@@ -15,7 +15,7 @@ const Login = () => {
       return;
     }
   
-    axios.post("http://localhost:3000/api/api/login",
+    axios.post("https://ssmss-backend.onrender.com/api/api/login",
     {contact,password}).then((res)=>{
       if(res.data.data[0].userType=="admin"){
         window.location.href= "http://localhost:5173/AdminDashboard";

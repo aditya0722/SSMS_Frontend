@@ -10,11 +10,20 @@
 .btn{
     display: none;
 }
-@media only screen and (max-height:980px){
-    .btn{
-        display: block;
-    }
+.myclass{
+    display:none;
 }
+
+@media only screen and (max-height:480px){
+    .btn{
+        display: none;
+    }
+    
+   
+}
+
+
+
 .a-hover a:hover{
  color:rgb(236, 238, 241);
  background-color: rgb(40, 124, 157);
