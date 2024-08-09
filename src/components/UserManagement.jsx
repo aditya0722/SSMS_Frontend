@@ -92,7 +92,7 @@ const UserManagement = () => {
 
     try {
       await axios.post("https://ssmss-backend.onrender.com/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      //sendSMS(user.contact, otp);
+      sendSMS(user.contact, otp);
       const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
       setUsers(data);
       setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
