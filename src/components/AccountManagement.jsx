@@ -15,7 +15,7 @@ const AccountManagement = () => {
     const [progressLoading, setProgressLoading] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
-    const [transactions, setTransactions] = useState([]);
+const [transactions, setTransactions] = useState([]);
     const [year, setYear] = useState(new Date().getFullYear());
     const [isIncomeDialogOpen, setIsIncomeDialogOpen] = useState(false);
     const [isExpenditureDialogOpen, setIsExpenditureDialogOpen] = useState(false);

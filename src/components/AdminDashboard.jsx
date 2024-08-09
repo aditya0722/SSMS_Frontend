@@ -9,12 +9,38 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import {Link} from 'react-router-dom';
 import ProgressBar from './ProgressBar';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  const navigate =useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataset,setdataset]=useState({users:0,balance:0,blogs:0})
+  const [transactions, setTransactions] = useState([]);
+  const handleClick=(e)=>{
+    e.preventDefault();
+    navigate("/AccountManagement")
+  }
+
+  useEffect(()=>{
+        
+    const getData= async()=>{
+        
+        try{
+         const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
+            setTransactions(response.data.data);
+            
+        }catch(e){
+            console.log(e)
+        }
+       
+    }
+    getData();
+    
+   
+},[])
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -112,34 +138,45 @@ const AdminDashboard = () => {
             </Grid>
           </Grid>
           <Box sx={{ mt: 3, textAlign: 'center',margin:'20px' }}>
-            <Button variant="contained" color="primary">View Complete Report</Button>
+            <Button variant="contained" color="primary" onClick={handleClick}>View Complete Report</Button>
           </Box>
   
             <Grid item xs={12} md={6} sx={{width:'100%'}}>
               <Paper elevation={3} sx={{ p: 2,width:'100%' }} >
                 <Typography variant="h6" gutterBottom>Recent Transactions</Typography>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>#</TableCell>
-                        <TableCell>Country</TableCell>
-                        <TableCell>Area</TableCell>
-                        <TableCell>Population</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data.map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{row.country}</TableCell>
-                          <TableCell>{row.area}</TableCell>
-                          <TableCell>{row.population}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <TableContainer component={Paper} sx={{ mt: 2 }}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        
+                                        <TableCell>Description</TableCell>
+                                        <TableCell>Amount</TableCell>
+                                        <TableCell>Category</TableCell>
+                                        <TableCell>Date</TableCell>
+                                        <TableCell>Balance</TableCell>
+                                        <TableCell>Member</TableCell>
+                                        
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {transactions && (transactions.map((transaction)=>{
+                                      const formattedDate = new Date(transaction.date).toLocaleDateString('en-GB');
+                                        return(
+                                        <TableRow key={transaction._id}>
+                                            <TableCell>{transaction.description}</TableCell>
+                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>{transaction.ammount}</TableCell>
+                                            <TableCell>{transaction.category}</TableCell>
+                                            <TableCell>{formattedDate}</TableCell>
+                                            <TableCell>{transaction.balance}</TableCell>
+                                            <TableCell>{transaction.name}</TableCell>
+                                            
+                                        </TableRow>
+                                        )
+                                        })
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
               </Paper>
             </Grid>
             

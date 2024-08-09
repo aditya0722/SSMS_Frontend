@@ -5,7 +5,9 @@ import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import AdminNav from './AdminNav';
 import UserSideBar from './UserSideBar';
-
+import ProgressBar from './ProgressBar';
+import Spinner from './Spinner';
+import axios from 'axios';
 
 const initialData = [
     { id: 1, name: 'Product 1', stock: 50, price: 10.00 },
@@ -18,10 +20,31 @@ const StoreManagement = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const [products, setProducts] = useState(initialData);
-
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
+
+
+        const fetchItems = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
+               
+                    setProducts(response.data);
+                    setLoading(false);
+                
+            } catch (e) {
+                console.error(e);
+                
+                    setLoading(false);
+                
+            }
+        };
+
+        fetchItems();
+
+
       const handleResize = () => {
         const mobile = window.innerWidth <= 768;
         setIsMobile(mobile);
@@ -43,7 +66,7 @@ const StoreManagement = () => {
 
 
     const barData = {
-        labels: products.map(product => product.name),
+        labels: products.map(product => product.itemName),
         datasets: [{
             label: 'Stock Level',
             data: products.map(product => product.stock),
@@ -53,7 +76,8 @@ const StoreManagement = () => {
 
     return (
         <>
-      
+      <Spinner loading={loading} />
+            <ProgressBar loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div style={{ display: 'flex' }}>
                 <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
@@ -72,17 +96,25 @@ const StoreManagement = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow style={{backgroundColor:'skyblue'}}>
-                                        <TableCell>Product</TableCell>
+                                    <TableCell>ID</TableCell>
+                                        <TableCell>Item</TableCell>
                                         <TableCell>Stock</TableCell>
-                                        <TableCell>Price</TableCell>
+                                        <TableCell>Price per item</TableCell>
+                                        <TableCell>Date of Added</TableCell>
+                                        
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {products.map((product,index) => (
                                         <TableRow style={{backgroundColor:index%2==0 ? '':'whitesmoke'}} key={product.id} >
-                                            <TableCell>{product.name}</TableCell>
+                                          
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{product.itemName}</TableCell>
                                             <TableCell>{product.stock}</TableCell>
-                                            <TableCell>${product.price.toFixed(2)}</TableCell>
+                                            <TableCell>{product.price}</TableCell>
+                                            <TableCell>{product.addedAt}</TableCell>
+                                           
+                                       
                                             
                                         </TableRow>
                                     ))}

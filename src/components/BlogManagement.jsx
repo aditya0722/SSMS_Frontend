@@ -144,10 +144,11 @@ const BlogManagement = () => {
         try {
             setLoading(true);
             await axios.delete(`https://ssmss-backend.onrender.com/api/deleteBlog/${id}`);
-            setSnackbar({ open: true, message: 'Blog deleted successfully!', severity: 'success' });
             const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
             setBlogs(response.data);
+            setSnackbar({ open: true, message: 'Blog deleted successfully!', severity: 'success' });
         } catch (error) {
+            console.log(error)
             setSnackbar({ open: true, message: 'Error occurred', severity: 'error' });
         } finally {
             setLoading(false);
@@ -188,7 +189,11 @@ const BlogManagement = () => {
                                 <>
                                     <Container sx={{ height: "60vh",marginLeft:-4 }} >
                                         {selectedBlog.imageUrl ? (
-                                            <img src={selectedBlog.imageUrl} alt={selectedBlog.title} style={{ width: '100%', height: 'auto' }} />
+                                            <img src={selectedBlog.imageUrl} alt={selectedBlog.title} style={{
+                                                width: '100%',
+                                                height: '450px', // You can set a fixed height
+                                                objectFit: 'cover',
+                                            }} />
                                         ) : (
                                             <img src="https://fakeimg.pl/600x400" style={{ width: '100%', height: '100%' }} alt="Placeholder" />
                                         )}
@@ -208,18 +213,39 @@ const BlogManagement = () => {
                             )}
                         </Grid>
                         <Grid item xs={12} md={4} ml={-5}>
-                            <Box sx={{ overflowY: 'auto', maxHeight: '60vh' }}>
-                                {blogs.map((blog, index) => (
-                                    <Box key={index} mb={2} onClick={() => setSelectedBlog(blog)} sx={{ cursor: 'pointer' }} >
-                                        {blog.imageUrl ? (
-                                            <img src={blog.imageUrl} alt={blog.title} style={{ width: '100%', height: 'auto' }} />
-                                        ) : (
-                                            <img src="https://fakeimg.pl/600x400" style={{ width: '100%', height: 'auto' }} alt="Placeholder" />
-                                        )}
-                                        <Typography variant="body1">{blog.title}</Typography>
-                                    </Box>
-                                ))}
-                            </Box>
+                        <Box sx={{ overflowY: 'auto' }}>
+    {blogs.map((blog, index) => (
+        <Box
+            key={index}
+            mb={2}
+            onClick={() => setSelectedBlog(blog)}
+            sx={{ cursor: 'pointer' }}
+        >
+            {blog.imageUrl ? (
+                <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    style={{
+                        width: '100%',
+                        height: 'auto', // You can set a fixed height
+                        objectFit: 'cover',
+                    }}
+                />
+            ) : (
+                <img
+                    src="https://fakeimg.pl/600x400"
+                    alt="Placeholder"
+                    style={{
+                        width: '100%',
+                        height: '200px', // You can set a fixed height
+                        objectFit: 'cover',
+                    }}
+                />
+            )}
+            <Typography variant="body1">{blog.title}</Typography>
+        </Box>
+    ))}
+</Box>
                         </Grid>
                     </Grid>
                     <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
@@ -282,7 +308,8 @@ const BlogManagement = () => {
                             <Button onClick={handleSaveClick} color="primary">{formData._id ? 'Update' : 'Create'}</Button>
                         </DialogActions>
                     </Dialog>
-                    <ConfirmDialog open={isConfirmOpen} onClose={closeConfirm} onConfirm={() => handleDelete(userToDelete)} />
+
+                    <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => handleDelete(userToDelete)} title="Delete Transaction" description="Are you sure you want to delete this Blog?" />
                 </Container>
             </div>
         </>

@@ -3,8 +3,14 @@ import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Dashboard, Description, ExitToApp, Poll, SupervisedUserCircle,BookOnline, Web,AccountBoxSharp,Receipt } from '@mui/icons-material';
 import 'react-pro-sidebar';
 import 'tailwindcss/tailwind.css';
-import {Link} from 'react-router-dom'
+import {Link,useNavigate} from 'react-router-dom'
 const SidebarMenu = ({ collapsed }) => {
+  const navigate = useNavigate();
+  const handleLogout=()=>{
+    localStorage.removeItem('user');
+    navigate('/');
+  }
+  
   return (
     <Sidebar collapsed={collapsed} className="h-full bg-white shadow-md ">
       <Menu iconShape="circle">
@@ -19,7 +25,7 @@ const SidebarMenu = ({ collapsed }) => {
       </Menu>
       <div className="mt-auto">
         <Menu iconShape="circle">
-          <MenuItem icon={<ExitToApp className="w-6 h-6 mr-2" />} className="hover:bg-gray-200">Logout</MenuItem>
+          <MenuItem icon={<ExitToApp className="w-6 h-6 mr-2" />} className="hover:bg-gray-200" onClick ={handleLogout}>Logout</MenuItem>
         </Menu>
       </div>
     </Sidebar>

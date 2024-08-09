@@ -115,7 +115,7 @@ const StoreManagement = () => {
 
     const openConfirmDialog = (id) => {
         setDeleteId(id);
-        setIsConfirmOpen(false);
+        setIsConfirmOpen(true);
     };
 
     const closeConfirmDialog = () => {
