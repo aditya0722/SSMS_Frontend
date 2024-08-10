@@ -176,10 +176,10 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                         </Select>
                         <TextField
                             margin="dense"
-                            name="price"
-                            label="Price"
+                            name="rentPrice"
+                            label="Rent Price"
                             fullWidth
-                            value={item.price}
+                            value={item.rentPrice}
                             InputProps={{
                                 readOnly: true,
                             }}
