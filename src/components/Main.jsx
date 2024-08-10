@@ -1,78 +1,78 @@
 import React from 'react';
-import { FaCheckCircle, FaCamera, FaMoneyBill, FaUsers } from 'react-icons/fa';
+import { CheckCircle, CameraAlt, AttachMoney, Group } from '@mui/icons-material';
+import { Box, Typography, Avatar, Grid, Paper } from '@mui/material';
 
 const features = [
-  { icon: FaCheckCircle, text: "Real-time collaboration" },
-  { icon: FaCamera, text: "Remote camera access" },
-  { icon: FaMoneyBill, text: "Financial management" },
-  { icon: FaUsers, text: "User-friendly interface" },
+  { icon: <CheckCircle color="primary" />, text: "वास्तविक समय सहयोग" },
+  { icon: <CameraAlt color="primary" />, text: "दूरस्थ क्यामेरा पहुँच" },
+  { icon: <AttachMoney color="primary" />, text: "वित्तीय व्यवस्थापन" },
+  { icon: <Group color="primary" />, text: "प्रयोगकर्ता-अनुकूल इन्टरफेस" },
 ];
 
 const testimonials = [
   {
     image: 'https://via.placeholder.com/100', 
-    name: 'John Doe', 
-    text: "Great community and support! Highly recommended!", 
-    role: 'President'
+    name: 'राम शर्मा', 
+    text: "उत्कृष्ट समुदाय र सहयोग! अत्यधिक सिफारिस गरिन्छ!", 
+    role: 'अध्यक्ष'
   },
   {
     image: 'https://via.placeholder.com/100', 
-    name: 'Jane Smith', 
-    text: "This app has transformed the way we work together!", 
-    role: 'Secretary'
+    name: 'सीता देवी', 
+    text: "यस एपले हाम्रो काम गर्ने तरिका परिवर्तन गरेको छ!", 
+    role: 'सचिव'
   },
   {
     image: 'https://via.placeholder.com/100', 
-    name: 'Michael Brown', 
-    text: "User-friendly and very reliable.", 
-    role: 'Member'
+    name: 'गोपाल सिंह', 
+    text: "प्रयोगकर्ता-अनुकूल र धेरै भरपर्दो।", 
+    role: 'सदस्य'
   },
 ];
 
 const Main = () => {
   return (
     <>
-      <section className="py-16">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="mb-8">
-              <h3 className="text-2xl font-semibold mb-4">Key Features</h3>
-              <ul className="space-y-4">
+      <Box sx={{ py: 8, backgroundColor: 'whiteSmoke', color: 'black' }}>
+        <Box sx={{ maxWidth: 'lg', mx: 'auto', px: 2 }}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold', color: 'secondary.main' }}>
+                मुख्य विशेषताहरू
+              </Typography>
+              <Box>
                 {features.map((feature, index) => (
-                  <li key={index} className="flex items-center group">
-                    <div className="rounded-full h-8 w-8 bg-blue-500 flex items-center justify-center text-white font-bold group-hover:bg-blue-700 transition duration-300">
-                      {index + 1}
-                    </div>
-                    <div className="flex items-center ml-4 space-x-2">
-                      <feature.icon className="text-blue-500 group-hover:text-blue-700 transition duration-300" />
-                      <span className="ml-2">{feature.text}</span>
-                    </div>
-                  </li>
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{ mr: 2 }}>{feature.icon}</Box>
+                    <Typography>{feature.text}</Typography>
+                  </Box>
                 ))}
-              </ul>
-            </div>
-            <div className="mb-8">
-              <h3 className="text-2xl font-semibold mb-4">Testimonials</h3>
-              <div className="space-y-4">
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold', color: 'secondary.main' }}>
+                प्रशंसापत्र
+              </Typography>
+              <Box>
                 {testimonials.map((testimonial, index) => (
-                  <div key={index} className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300 group">
-                    <div className="flex items-center mb-4">
-                      <img src={testimonial.image} alt={testimonial.name} className="w-16 h-16 rounded-full mr-4" />&nbsp;&nbsp;&nbsp;
-                      <div>
-                        <p className="font-semibold group-hover:text-blue-700 transition duration-300">{testimonial.name}</p>
-                        <p className="text-sm text-gray-500 group-hover:text-blue-700 transition duration-300">{testimonial.role}</p>
-                      </div>
-                    </div>
-                    <p className="mb-4 group-hover:text-blue-700 transition duration-300">"{testimonial.text}"</p>
-                  </div>
+                  <Paper key={index} sx={{ p: 3, mb: 2, backgroundColor: 'white' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Avatar src={testimonial.image} alt={testimonial.name} sx={{ mr: 2, width: 56, height: 56 }} />
+                      <Box>
+                        <Typography sx={{ fontWeight: 'bold', color: 'secondary.main' }}>{testimonial.name}</Typography>
+                        <Typography variant="body2" sx={{ color: 'black' }}>{testimonial.role}</Typography>
+                      </Box>
+                    </Box>
+                    <Typography variant="body1" sx={{ color: 'black' }}>"{testimonial.text}"</Typography>
+                  </Paper>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
     </>
   );
-}
+};
 
 export default Main;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaBars, FaTimes } from 'react-icons/fa';
-
+import {Link} from 'react-router-dom'
 const NavBar = () => {
   
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,15 +13,17 @@ const NavBar = () => {
       <div className="container mx-auto py-4 px-6 flex items-center justify-between">
         <div className="flex items-center">
           <img src="/path/to/logo.png" alt="Logo" className="h-8 mr-2" />
-          <span className="text-xl font-semibold text-gray-800">Community WebApp</span>
+          <span className="text-xl font-semibold text-gray-800">SSMSS</span>
         </div>
         <nav className="hidden md:flex space-x-4">
-          <a href="/" className="text-gray-600 hover:text-blue-900">Home</a>
-          <a href="/About" className="text-gray-600 hover:text-gray-900">About Us</a>
-          <a href="/Members" className="text-gray-600 hover:text-gray-900">Members</a>
-          <a href="/Gallery" className="text-gray-600 hover:text-gray-900">Gallery</a>
-          <a href="/contact" className="text-gray-600 hover:text-gray-900">Contact</a>
-          <a href="/Login" className="text-gray-600 hover:text-gray-900">Login</a>
+          <Link to="/" className="text-gray-600 hover:text-blue-900">Home</Link>
+          <Link to="/About" className="text-gray-600 hover:text-gray-900">About Us</Link>
+          <Link to="/Members" className="text-gray-600 hover:text-gray-900">Members</Link>
+          <Link to="/Gallery" className="text-gray-600 hover:text-gray-900">Gallery</Link>
+          <Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+          <Link to="/ConstitutionPage" className="text-gray-600 hover:text-gray-900">Constitution</Link>
+          <Link to="/Login" className="text-gray-600 hover:text-gray-900">Login</Link>
+          
         </nav>
         <button
           className="md:hidden text-gray-600 focus:outline-none btn"
@@ -33,12 +35,13 @@ const NavBar = () => {
       </div>
       {isMobileMenuOpen && (
         <nav className="md:hidden bg-white shadow-md a-hover">
-          <a href="/" className="block py-2 px-4 text-gray-600 hover:text-blue-900">Home</a>
-          <a href="/About" className="block py-2 px-4 text-gray-600 hover:text-gray-900">About Us</a>
-          <a href="/Members" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Members</a>
-          <a href="/Gallery" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Gallery</a>
-          <a href="/contact" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Contact</a>
-          <a href="/Login" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Login</a>
+          <Link to="/" className="block py-2 px-4 text-gray-600 hover:text-blue-900">Home</Link>
+          <Link to="/About" className="block py-2 px-4 text-gray-600 hover:text-gray-900">About Us</Link>
+          <Link to="/Members" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Members</Link>
+          <Link to="/Gallery" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Gallery</Link>
+          <Link to="/contact" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Contact</Link>
+          <Link to="/ConstitutionPage" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Constitution</Link>
+          <Link to="/Login" className="block py-2 px-4 text-gray-600 hover:text-gray-900">Login</Link>
         </nav>
       )}
     </header>

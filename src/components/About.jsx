@@ -1,57 +1,71 @@
 import React from "react";
-import NavBar from './NavBar'
+import { People, Group, Visibility, VerifiedUser } from "@mui/icons-material";
+import NavBar from './NavBar';
+
 export default function About() {
   return (
     <>
-    <NavBar/>
-    <div className="relative bg-blue-50 overflow-hidden">
-      {/* Decorative shapes */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-blue-300 rounded-full opacity-50 transform translate-x-[-50%] translate-y-[-50%]"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500 rounded-full opacity-50 transform translate-x-[50%] translate-y-[50%]"></div>
+      <NavBar />
+      <div className="relative bg-blue-50 overflow-hidden">
+        {/* Decorative shapes */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-300 rounded-full opacity-50 transform translate-x-[-50%] translate-y-[-50%]"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500 rounded-full opacity-50 transform translate-x-[50%] translate-y-[50%]"></div>
 
-      <section className="container mx-auto py-16 px-6 lg:px-16 relative z-10">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-blue-800 mb-4">About Us</h1>
-          <p className="text-lg text-blue-600 mb-8">
-            Welcome to our community! We are dedicated to bringing people together and fostering a supportive environment.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Our Mission */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-blue-800 mb-4">Our Mission</h2>
-            <p className="text-blue-600">
-              Our mission is to create a welcoming space where members can share ideas, support each other, and grow together. We believe in the power of community and strive to make a positive impact on everyone involved.
+        <section className="container mx-auto py-16 px-6 lg:px-16 relative z-10">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-blue-800 mb-4">हाम्रो बारेमा </h1>
+            <p className="text-lg text-blue-600 mb-8">
+              हाम्रो समुदायमा स्वागत छ! हामी मानिसहरूलाई एकसाथ ल्याउने र सहयोगात्मक वातावरणलाई प्रोत्साहन गर्ने उद्देश्यले समर्पित छौं। 
             </p>
           </div>
 
-          {/* Our Vision */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-blue-800 mb-4">Our Vision</h2>
-            <p className="text-blue-600">
-              Our vision is to become a beacon of unity and support, inspiring others to join us in our journey towards a better, more connected world. We aim to empower individuals through collaboration and shared experiences.
-            </p>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Our Mission */}
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-start">
+              <Group className="text-blue-800 mr-4" />
+              <div>
+                <h2 className="text-2xl font-semibold text-blue-800 mb-4">हाम्रो लक्ष्य </h2>
+                <p className="text-blue-600">
+                  हाम्रो लक्ष्य सदस्यहरूलाई विचारहरू साझा गर्न, एकअर्कालाई समर्थन गर्न, र सँगै बढ्न सक्ने स्वागतयोग्य ठाउँ सिर्जना गर्नु हो।
+                </p>
+              </div>
+            </div>
 
-          {/* Our Values */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-blue-800 mb-4">Our Values</h2>
-            <p className="text-blue-600">
-              We value inclusivity, respect, and empathy. Our community thrives on the diverse perspectives and unique contributions of each member. We are committed to maintaining a safe and positive environment for everyone.
-            </p>
-          </div>
+            {/* Our Vision */}
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-start">
+              <Visibility className="text-blue-800 mr-4" />
+              <div>
+                <h2 className="text-2xl font-semibold text-blue-800 mb-4">हाम्रो दृष्टिकोण </h2>
+                <p className="text-blue-600">
+                  हाम्रो दृष्टिकोण एकता र समर्थनको प्रतीक बन्ने हो, अरूलाई हाम्रो यात्रा तर्फ प्रेरित गर्दै।
+                </p>
+              </div>
+            </div>
 
-          {/* Our Team */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-blue-800 mb-4">Our Team</h2>
-            <p className="text-blue-600">
-              Our team consists of passionate individuals dedicated to supporting our community. From organizing events to providing resources, we are here to help our members succeed and feel valued.
-            </p>
+            {/* Our Values */}
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-start">
+              <VerifiedUser className="text-blue-800 mr-4" />
+              <div>
+                <h2 className="text-2xl font-semibold text-blue-800 mb-4">हाम्रा मूल्यहरू </h2>
+                <p className="text-blue-600">
+                  हामी समावेशिता, सम्मान, र सहानुभूतिको मूल्य राख्छौं। 
+                </p>
+              </div>
+            </div>
+
+            {/* Our Team */}
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-start">
+              <People className="text-blue-800 mr-4" />
+              <div>
+                <h2 className="text-2xl font-semibold text-blue-800 mb-4">हाम्रो टोली </h2>
+                <p className="text-blue-600">
+                  हाम्रो टोलीमा हाम्रो समुदायलाई समर्थन गर्न समर्पित जोशिलो व्यक्तिहरू छन्।
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
     </>
   );
 }

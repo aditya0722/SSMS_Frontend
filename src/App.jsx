@@ -23,7 +23,10 @@ import AttandanceManagement from './components/AttandanceManagement';
 import UserAttandance from './components/UserAttandance';
 import { useUser } from './components/UserContext';
 import PrivateRoute from './components/PrivateRoute';
+import ConstitutionPage from './components/ConstitutionPage';
 import Footer from './components/footer';
+
+
 
 function App() {
   const { setUser } = useUser();
@@ -83,6 +86,7 @@ function App() {
           <Route path='/Members' element={<Members />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/ConstitutionPage" element={<ConstitutionPage />} />
 
           {/* Admin Routes */}
           <Route 

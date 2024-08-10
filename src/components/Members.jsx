@@ -6,7 +6,7 @@ const  Members= () => {
   
   const [users, setUsers] = useState([]);
       useEffect(() => {
-        axios.get("https://ssmss-backend.onrender.com/api/api/login/members")
+        axios.get("https://ssmss-backend.onrender.com/api/login/members")
           .then((res) => {
             setUsers(res.data);
           })
@@ -36,7 +36,10 @@ const  Members= () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {users.map((member) => (
             <div key={member.id} className="bg-white p-6 rounded-lg shadow-lg">
-              <img src={member.imageUrl} alt={member.name} className="w-full h-48 object-cover rounded-lg mb-4" />
+              {(member.imageUrl)?(<img src={member.imageUrl} alt={member.name} className="w-full h-48 object-cover rounded-lg mb-4" />):(
+                <img src="https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg" style={{borderRadius:"50%"}} alt="User" />
+              )
+}
               <h2 className="text-2xl font-semibold text-blue-800 mb-2">{member.name}</h2>
               <p className="text-blue-600">{member.role}</p>
             </div>
