@@ -20,8 +20,8 @@ const initialReceipts = [
         totalAmount: 3200,
         status: "Returned",
         items: [
-            { name: 'Plate', price: 10, quantity: 30, broken: 2, checked: true },
-            { name: 'Glass', price: 10, quantity: 30, broken: 2, checked: true }
+            { name: 'Plate', price: 10,rentPrice:5, quantity: 30, broken: 2, checked: true },
+            { name: 'Glass', price: 10,rentPrice:5, quantity: 30, broken: 2, checked: true }
         ]
     }
 ];
@@ -99,14 +99,13 @@ const ItemsReceiptManagement = () => {
 
 
     const handleAddReceipt = async (receipt) => {
-        console.log(receipt)
+       
         try{
             setLoading(true)
             await axios.post("https://ssmss-backend.onrender.com/api/savereceipt",receipt)
             const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
-                setReceipts(response.data)
+            setReceipts(response.data)
             setSnackbar({ open: true, message: 'Receipt added successfully', severity: 'success' });
-            
         }
         catch(error){
             console.log(error)
@@ -150,6 +149,7 @@ const ItemsReceiptManagement = () => {
     };
 
     const openDetailDialog = (receipt) => {
+        console.log(receipt)
         setSelectedReceipt(receipt);
         setReturnDetails(receipt.items.reduce((acc, item) => ({
             ...acc,
@@ -161,6 +161,7 @@ const ItemsReceiptManagement = () => {
         else{
             setisreceiptReturned(false)
         }
+        console.log(receipt)
         setIsDetailOpen(true);
     };
 
@@ -253,6 +254,7 @@ const ItemsReceiptManagement = () => {
       
 
     const calculateBrokenCost = () => {
+ 
         if (!selectedReceipt) return 0;
         return selectedReceipt.items.reduce((total, item) => {
             const brokenCount = returnDetails[item.name]?.broken || item.broken;
@@ -309,7 +311,7 @@ const ItemsReceiptManagement = () => {
         doc.setTextColor(0, 0, 0); // Set text color to black
         doc.text('Item Name', 20, 65);
         doc.text('Quantity', 80, 65);
-        doc.text('Price', 120, 65);
+        doc.text('Rent Price', 120, 65);
         doc.text('Broken', 160, 65);
     
         // Line Separator
@@ -319,6 +321,7 @@ const ItemsReceiptManagement = () => {
         // Table Content
         let yPos = 75;
         let brokenPrice = 0;
+        console.log("receiptpdf",receipt)
         receipt.items.forEach((item) => {
             const itemPrice = parseFloat(item.price) || 0;
             const itemBroken = parseFloat(item.broken) || 0;
@@ -326,7 +329,7 @@ const ItemsReceiptManagement = () => {
             doc.setTextColor(0, 0, 0); // Set text color to black
             doc.text(item.name, 20, yPos);
             doc.text(item.quantity.toString(), 80, yPos, null, null, 'right');
-            doc.text(itemPrice.toFixed(2), 120, yPos, null, null, 'right');
+            doc.text(item.rentPrice.toFixed(2), 120, yPos, null, null, 'right');
             doc.text(itemBroken.toString(), 160, yPos, null, null, 'right');
     
             // Calculate broken price
@@ -352,9 +355,9 @@ const ItemsReceiptManagement = () => {
         yPos += 10;
         doc.setFontSize(14);
         doc.setTextColor(255, 0, 0); // Set text color to red
-        doc.text(`Total Rent: ${rentCost.toFixed(2)}`, 20, yPos);
-        doc.text(`Total Broken Items Cost: ${brokenCost.toFixed(2)}`, 20, yPos + 10);
-        doc.text(`Grand Total: ${grandTotal.toFixed(2)}`, 20, yPos + 20);
+        doc.text(`Total Rent: ₹${rentCost.toFixed(2)}`, 20, yPos);
+        doc.text(`Total Broken Items Cost: ₹${brokenCost.toFixed(2)}`, 20, yPos + 10);
+        doc.text(`Grand Total: ₹${grandTotal.toFixed(2)}`, 20, yPos + 20);
     
         // Additional Note
         yPos += 35;
@@ -398,10 +401,10 @@ const ItemsReceiptManagement = () => {
                 </Button>
                 <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                     {receipts.map(receipt => (
-                        <Card key={receipt.id} style={{ width: '350px', margin: '10px', background: receipt.status === 'Taken' ? '#C8E6C9' : '#FFF69B' }}>
+                        <Card key={receipt.id} style={{ width: '300px', margin: '10px', background: receipt.status === 'Taken' ? '#C8E6C9' : '#FFF69B' }}>
                             <CardContent>
                                 <Box>
-                                    <Typography variant="h4"><b>{receipt.name}</b></Typography><br />
+                                    <Typography variant="h5"><b>{receipt.name}</b></Typography><br />
                                     <Typography variant="h6"><b>Address: </b>{receipt.address}</Typography>
                                     <Typography variant="h6"><b>Contact: </b>{receipt.contactNumber}</Typography>
                                     <Typography variant="h6"><b>Total Amount: </b>{receipt.totalAmount}</Typography>
@@ -454,6 +457,7 @@ const ItemsReceiptManagement = () => {
             <DialogContent style={{ backgroundColor: '#e3f2fd' }}>
                 {selectedReceipt && (
                     <>
+                    {console.log('sele',selectedReceipt)}
                         <Typography variant="h5" gutterBottom color="primary" mt={3}>
                             Samsing Sawali Manav Sanskar Samiti
                         </Typography>
@@ -487,7 +491,7 @@ const ItemsReceiptManagement = () => {
                                         <TableRow key={item.name}>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
-                                            <TableCell>{item.price}</TableCell>
+                                            <TableCell>₹{item.rentPrice}</TableCell>
                                             <TableCell>
                                                 
                                                     <div classNmae='md: flex'>
@@ -521,13 +525,14 @@ const ItemsReceiptManagement = () => {
                         </TableContainer>
                         <Box style={{ padding: '16px', borderRadius: '8px', marginTop: '16px' }}>
                             <Typography variant="body1" gutterBottom sx={{ color: "red" }}>
-                                {`Total Broken Items Cost: ${calculateBrokenCost()}`}
+                                {`Total Broken Items Cost: ₹${calculateBrokenCost()}`}
                             </Typography>
                             <Typography variant="body1" gutterBottom color="primary">
-                                {`Grand Total: ${calculateGrandTotal()}`}
+                                {`Grand Total: ₹${calculateGrandTotal()}`}
                             </Typography>
                         </Box>
                     </>
+                    
                 )}
             </DialogContent>
             <DialogActions className="text-blue-600">

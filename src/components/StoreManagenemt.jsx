@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Alert, Typography, Snackbar, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Add,Receipt, Edit, Delete } from '@mui/icons-material';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import AdminNav from './AdminNav';
@@ -10,8 +10,14 @@ import ProgressBar from './ProgressBar';
 import Spinner from './Spinner';
 import ConfirmDialog from './ConfirmDialog';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const StoreManagement = () => {
+    const navigate=useNavigate();
+    const clickHandler=()=>{
+        navigate("/ItemsReceiptManagement")
+       }
+    
     const [products, setProducts] = useState([]);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
@@ -166,7 +172,8 @@ const StoreManagement = () => {
                             </Box>
                         </Box>
                         <Button variant="contained" color="primary" startIcon={<Add />} onClick={handleAdd}>Add Product</Button>
-                        <Button variant="contained" color="secondary" startIcon={<Add />} sx={{ml:5}}>Add Recipt</Button>
+                        
+                    <Button variant="contained" color="secondary" startIcon={<Receipt />} sx={{ml:5}} onClick={clickHandler}>Add Recipt</Button>
                         <TableContainer component={Paper} sx={{ mt: 2 }}>
                             <Table>
                                 <TableHead>
@@ -175,6 +182,7 @@ const StoreManagement = () => {
                                         <TableCell>Item</TableCell>
                                         <TableCell>Stock</TableCell>
                                         <TableCell>Price per item</TableCell>
+                                        <TableCell>Price for rent</TableCell>
                                         <TableCell>Date of Added</TableCell>
                                         <TableCell>Actions</TableCell>
                                     </TableRow>
@@ -186,6 +194,7 @@ const StoreManagement = () => {
                                             <TableCell>{product.itemName}</TableCell>
                                             <TableCell>{product.stock}</TableCell>
                                             <TableCell>{product.price}</TableCell>
+                                            <TableCell>{product.rentPrice}</TableCell>
                                             <TableCell>{product.addedAt}</TableCell>
                                             <TableCell>
                                                 <IconButton color="primary" onClick={() => handleEdit(product._id)}>

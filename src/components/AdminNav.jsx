@@ -68,7 +68,7 @@ const AdminNav = ({ toggleSidebar }) => {
           user.imageUrl ? (
             <img src={user.imageUrl} alt="User" height="50" width="50" />
           ) : (
-            <img src="https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg" alt="User" height="50" width="50" />
+            <img src="https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg" style={{borderRadius:"50%"}} alt="User" height="50" width="50"/>
           )
         )}
         {user &&(

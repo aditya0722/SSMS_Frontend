@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 
 const ProductForm = ({ open, handleClose, handleSubmit, initialData }) => {
-    const [product, setProduct] = useState({ itemName: '', stock: 0, price: 0.00 });
-    const [errors, setErrors] = useState({ itemName: '', stock: '', price: '' });
+    const [product, setProduct] = useState({ itemName: '', stock: 0, price: 0.00,rentPrice:0.00 });
+    const [errors, setErrors] = useState({ itemName: '', stock: '', price: '',rentPrice:'' });
 
     useEffect(() => {
         if (initialData) {
             setProduct(initialData);
         } else {
-            setProduct({ itemName: '', stock: 0, price: 0.00 });
+            setProduct({ itemName: '', stock: 0, price: 0.00,rentPrice:0.00 });
         }
     }, [initialData, open]);
 
@@ -23,7 +23,7 @@ const ProductForm = ({ open, handleClose, handleSubmit, initialData }) => {
 
     const validate = () => {
         let valid = true;
-        let newErrors = { itemName: '', stock: '', price: '' };
+        let newErrors = { itemName: '', stock: '', price: '',rentPrice:'' };
 
         if (!product.itemName) {
             newErrors.itemName = 'Product name is required';
@@ -35,6 +35,10 @@ const ProductForm = ({ open, handleClose, handleSubmit, initialData }) => {
         }
         if (product.price < 0) {
             newErrors.price = 'Price cannot be negative';
+            valid = false;
+        }
+        if (product.rentPrice < 0) {
+            newErrors.rentPrice = 'Rent price cannot be negative';
             valid = false;
         }
 
@@ -85,6 +89,17 @@ const ProductForm = ({ open, handleClose, handleSubmit, initialData }) => {
                     onChange={handleChange}
                     error={!!errors.price}
                     helperText={errors.price}
+                />
+                <TextField
+                    margin="dense"
+                    name="rentPrice"
+                    label="Rent Price per item"
+                    type="number"
+                    fullWidth
+                    value={product.rentPrice}
+                    onChange={handleChange}
+                    error={!!errors.rentPrice}
+                    helperText={errors.rentPrice}
                 />
             </DialogContent>
             <DialogActions>

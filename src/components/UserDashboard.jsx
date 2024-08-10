@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminNav from './AdminNav';
-import SidebarMenu from './SidebarMenu';
-import { Box, Grid, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import UserSideBar from './UserSideBar';
+import { Box, Grid,Container, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PieChartIcon from '@mui/icons-material/PieChart';
@@ -86,9 +86,9 @@ const AdminDashboard = () => {
       <AdminNav toggleSidebar={toggleSidebar} />
       <div style={{ display: 'flex' }}>
         <div className={` transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0   -mx-10' : 'translate-x-0'}`}>
-          <SidebarMenu collapsed={isSidebarCollapsed} />
+          <UserSideBar collapsed={isSidebarCollapsed} />
         </div>
-        <Box sx={{ flexGrow: 1, p: 3, backgroundColor: '#e3f2fd', minHeight: '100vh' }} >
+        <Container sx={{ flexGrow: 1, p: 3, backgroundColor: '#e3f2fd', minHeight: '100vh' }} >
           <Typography variant="h4" gutterBottom>
             User Dashboard
           </Typography>
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
          
          
            
-        </Box>
+        </Container>
       </div>
     </div>
   );

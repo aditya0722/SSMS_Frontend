@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Snackbar, Alert, Button, Box, IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Grid } from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Add, Edit, Delete, GifBoxOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
@@ -49,7 +49,7 @@ const BlogManagement = () => {
             } catch (e) {
                 console.log(e);
             }
-            finally{
+            finally {
                 setLoading(false)
             }
         }
@@ -175,19 +175,20 @@ const BlogManagement = () => {
             <Spinner loading={loading} />
             <AdminNav toggleSidebar={toggleSidebar} />
             <div className="flex min-h-screen">
-                <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}`}>
+                <div className={`transition-transform duration-300  ${isSidebarCollapsed ? 'hidden -translate-x-full lg:translate-x-0 md:hidden' : 'translate-x-0 block'}`}>
                     <SidebarMenu collapsed={isSidebarCollapsed} />
                 </div>
                 <Container >
-                    <Typography variant="h4" sx={{ padding: '20px', marginLeft: -5 }}>Blog Management</Typography>
-                    <Button variant="contained" color="primary" startIcon={<Add />} sx={{ ml: -2 }} onClick={() => handleOpenDialog()}>
+                    <Typography variant="h4" sx={{ padding: '20px', marginLeft: 0 }}>Blog Management</Typography>
+                    <Button variant="contained" color="primary" startIcon={<Add />} sx={{ ml: 2 }} onClick={() => handleOpenDialog()}>
                         Create Blog
                     </Button>
                     <Grid container spacing={2} mt={2} >
                         <Grid item xs={12} md={8}>
                             {selectedBlog && (
                                 <>
-                                    <Container sx={{ height: "60vh",marginLeft:-4 }} >
+                                    <Container sx={{ height: "60vh", marginLeft: 0 }} >
+                                        <Box>
                                         {selectedBlog.imageUrl ? (
                                             <img src={selectedBlog.imageUrl} alt={selectedBlog.title} style={{
                                                 width: '100%',
@@ -197,8 +198,10 @@ const BlogManagement = () => {
                                         ) : (
                                             <img src="https://fakeimg.pl/600x400" style={{ width: '100%', height: '100%' }} alt="Placeholder" />
                                         )}
+                                        </Box>
                                     </Container>
-                                    <Typography variant="h5" mt={2}>{selectedBlog.title}</Typography>
+                                    <Container>
+                                    <Typography variant="h5" mt={10}>{selectedBlog.title}</Typography>
                                     <Typography variant="body1" mt={1}>{selectedBlog.description}</Typography>
                                     <Typography variant="body2" mt={1}>{new Date(selectedBlog.date).toLocaleDateString()} - {selectedBlog.location}</Typography>
                                     <Box mt={2}>
@@ -209,43 +212,44 @@ const BlogManagement = () => {
                                             <Delete />
                                         </IconButton>
                                     </Box>
+                                    </Container>
                                 </>
                             )}
                         </Grid>
-                        <Grid item xs={12} md={4} ml={-5}>
-                        <Box sx={{ overflowY: 'auto' }}>
-    {blogs.map((blog, index) => (
-        <Box
-            key={index}
-            mb={2}
-            onClick={() => setSelectedBlog(blog)}
-            sx={{ cursor: 'pointer' }}
-        >
-            {blog.imageUrl ? (
-                <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    style={{
-                        width: '100%',
-                        height: 'auto', // You can set a fixed height
-                        objectFit: 'cover',
-                    }}
-                />
-            ) : (
-                <img
-                    src="https://fakeimg.pl/600x400"
-                    alt="Placeholder"
-                    style={{
-                        width: '100%',
-                        height: '200px', // You can set a fixed height
-                        objectFit: 'cover',
-                    }}
-                />
-            )}
-            <Typography variant="body1">{blog.title}</Typography>
-        </Box>
-    ))}
-</Box>
+                        <Grid item xs={12} md={4} ml={0}>
+                            <Box sx={{ overflowY: 'auto' }}>
+                                {blogs.map((blog, index) => (
+                                    <Box
+                                        key={index}
+                                        mb={2}
+                                        onClick={() => setSelectedBlog(blog)}
+                                        sx={{ cursor: 'pointer' }}
+                                    >
+                                        {blog.imageUrl ? (
+                                            <img
+                                                src={blog.imageUrl}
+                                                alt={blog.title}
+                                                style={{
+                                                    width: '100%',
+                                                    height: 'auto', // You can set a fixed height
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        ) : (
+                                            <img
+                                                src="https://fakeimg.pl/600x400"
+                                                alt="Placeholder"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '200px', // You can set a fixed height
+                                                    objectFit: 'cover',
+                                                }}
+                                            />
+                                        )}
+                                        <Typography variant="body1">{blog.title}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
                         </Grid>
                     </Grid>
                     <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
@@ -295,12 +299,12 @@ const BlogManagement = () => {
                                     helperText={errors.location}
                                     fullWidth
                                 />
-                                   <Button variant="contained" component="label" sx={{ mt: 2 }}>
-                                Upload Image
-                                <input type="file" hidden onChange={handleFileChange} />
-                            </Button>
-                            {(formData._id)?<img src={formData.imageUrl} alt="Upload Preview" style={{ width: '100%', height: 'auto', marginTop: '10px' }} />:file && <img src={URL.createObjectURL(file)} alt="Upload Preview" style={{ width: '100%', height: 'auto', marginTop: '10px' } }/>}
-                            
+                                <Button variant="contained" component="label" sx={{ mt: 2 }}>
+                                    Upload Image
+                                    <input type="file" hidden onChange={handleFileChange} />
+                                </Button>
+                                {(formData._id) ? <img src={formData.imageUrl} alt="Upload Preview" style={{ width: '100%', height: 'auto', marginTop: '10px' }} /> : file && <img src={URL.createObjectURL(file)} alt="Upload Preview" style={{ width: '100%', height: 'auto', marginTop: '10px' }} />}
+
                             </Box>
                         </DialogContent>
                         <DialogActions>

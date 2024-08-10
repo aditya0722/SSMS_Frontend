@@ -330,10 +330,10 @@ const [transactions, setTransactions] = useState([]);
                                     {transactions.filter(t => new Date(t.date).getFullYear() === year).map((transaction) => (
                                         <TableRow key={transaction._id}>
                                             <TableCell>{transaction.description}</TableCell>
-                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>{transaction.ammount}</TableCell>
+                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>₹{transaction.ammount}</TableCell>
                                             <TableCell>{transaction.category}</TableCell>
                                             <TableCell>{transaction.date}</TableCell>
-                                            <TableCell>{transaction.balance}</TableCell>
+                                            <TableCell>₹{transaction.balance}</TableCell>
                                             <TableCell>{transaction.name}</TableCell>
                                             <TableCell>
                                                 <IconButton onClick={() => handleEditTransaction(transaction)}>

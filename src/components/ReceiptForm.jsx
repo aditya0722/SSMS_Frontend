@@ -36,7 +36,8 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
             ? { 
                 ...item, 
                 name: selectedItem.itemName, 
-                price: selectedItem.price, 
+                price: selectedItem.price,
+                rentPrice:selectedItem.rentPrice, 
                 stock: selectedItem.stock,
                 quantity: '',
                 broken: '' 
@@ -71,7 +72,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const addItem = () => {
-        const newItems = [...receipt.items, { name: '', price: '', stock: '', quantity: '', broken: '' }];
+        const newItems = [...receipt.items, { name: '', price: '',rentPrice:'', stock: '', quantity: '', broken: '' }];
         setReceipt(prev => ({ ...prev, items: newItems }));
         updateTotal(newItems);
     };
@@ -94,6 +95,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const onSubmit = () => {
+        console.log(receipt)
         if (validate()) {
             onSave(receipt);
         }
@@ -102,7 +104,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     const calculateTotal = (items) => {
         return items.reduce((total, item) => {
             const quantity = parseFloat(item.quantity) || 0;
-            const price = parseFloat(item.price) || 0;
+            const price = parseFloat(item.rentPrice) || 0;
             return total + (quantity * price);
         }, 0).toFixed(2);
     };

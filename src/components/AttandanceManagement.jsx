@@ -302,7 +302,7 @@ const AttendanceManagement = () => {
       <Spinner loading={loading} />
       <AdminNav toggleSidebar={toggleSidebar} />
       <div className="flex min-h-screen">
-        <div className={`transition-transform duration-300  ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 myclass' : 'translate-x-0 '}`}>
+      <div className={`transition-transform duration-300  ${isSidebarCollapsed ? 'hidden -translate-x-full lg:translate-x-0 md:hidden' : 'translate-x-0 block'}`}>
           <SidebarMenu collapsed={isSidebarCollapsed} />
         </div>
         <Container style={{ flex: 1, padding: '10px', overflowX: 'auto' }}>
@@ -436,9 +436,9 @@ const AttendanceManagement = () => {
                       <td colSpan={4} key={index} style={{ border: '1px solid #ddd', padding: '0px', whiteSpace: 'nowrap' }}>
                         <div>Total Present: {summary.totalPresent}</div>
                         <div>Total Absent: {summary.totalAbsent}</div>
-                        <div>Total Fees: {summary.totalFees}</div>
-                        <div>Total Late Fees: {summary.totalLateFees}</div>
-                        <div>Total Absent Fees: {summary.totalAbsentFees}</div>
+                        <div>Total Fees: ₹{summary.totalFees}</div>
+                        <div>Total Late Fees: ₹{summary.totalLateFees}</div>
+                        <div>Total Absent Fees: ₹{summary.totalAbsentFees}</div>
                       </td>
                     );
                   })}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminNav from './AdminNav';
 import SidebarMenu from './SidebarMenu';
-import { Box, Grid, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Grid, Paper,Container, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import PieChartIcon from '@mui/icons-material/PieChart';
@@ -88,7 +88,7 @@ const AdminDashboard = () => {
         <div className={` transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0   -mx-10' : 'translate-x-0'}`}>
           <SidebarMenu collapsed={isSidebarCollapsed} />
         </div>
-        <Box sx={{ flexGrow: 1, p: 3, backgroundColor: '#e3f2fd', minHeight: '100vh' }} >
+        <Container sx={{ flexGrow: 1, p: 3, backgroundColor: '#e3f2fd', minHeight: '100vh' }} >
           <Typography variant="h4" gutterBottom>
             Admin Dashboard
           </Typography>
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
                 <AccountBalanceIcon fontSize="large" sx={{ color: '#1976d2', mr: 2 }} />
                 <div>
                   <Typography variant="h6">Total Balance</Typography>
-                  <Typography variant="h5" textAlign={"center"}>{dataset.balance}</Typography>
+                  <Typography variant="h5" textAlign={"center"}>₹{dataset.balance}</Typography>
                 </div>
               </Paper>
               </Link>
@@ -164,10 +164,10 @@ const AdminDashboard = () => {
                                         return(
                                         <TableRow key={transaction._id}>
                                             <TableCell>{transaction.description}</TableCell>
-                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>{transaction.ammount}</TableCell>
+                                            <TableCell style={{ color: transaction.ammount >= 0 ? 'green' : 'red' }}>₹{transaction.ammount}</TableCell>
                                             <TableCell>{transaction.category}</TableCell>
                                             <TableCell>{formattedDate}</TableCell>
-                                            <TableCell>{transaction.balance}</TableCell>
+                                            <TableCell>₹{transaction.balance}</TableCell>
                                             <TableCell>{transaction.name}</TableCell>
                                             
                                         </TableRow>
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
          
          
            
-        </Box>
+        </Container>
       </div>
     </div>
   );
