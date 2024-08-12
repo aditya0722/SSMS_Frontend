@@ -6,7 +6,7 @@ const  Members= () => {
   
   const [users, setUsers] = useState([]);
       useEffect(() => {
-        axios.get("https://ssmss-backend.onrender.com/api/login/members")
+        axios.get("http://localhost:3000/api/login/members")
           .then((res) => {
             setUsers(res.data);
           })
@@ -27,9 +27,9 @@ const  Members= () => {
 
       <section className="container mx-auto py-16 px-6 lg:px-16 relative z-10">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-blue-800 mb-4">Our Members</h1>
+          <h1 className="text-4xl font-bold text-blue-800 mb-4">हाम्रो सदस्यहरू</h1>
           <p className="text-lg text-blue-600">
-            Meet the dedicated members of our community.
+          हाम्रो समुदायका समर्पित सदस्यहरूलाई भेट्नुहोस्।
           </p>
         </div>
 

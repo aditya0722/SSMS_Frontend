@@ -24,7 +24,7 @@ const UserManagement = () => {
       const fetchUsers = async () => {
         try {
           setLoading(true);
-          const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
+          const { data } = await axios.get("http://localhost:3000/api/login/members");
           setUsers(data);
           console.log(data)
         } catch (error) {

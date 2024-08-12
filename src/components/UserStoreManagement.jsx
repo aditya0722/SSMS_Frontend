@@ -29,7 +29,7 @@ const StoreManagement = () => {
         const fetchItems = async () => {
             setLoading(true);
             try {
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
+                const response = await axios.get("http://localhost:3000/api/store");
                
                     setProducts(response.data);
                     setLoading(false);

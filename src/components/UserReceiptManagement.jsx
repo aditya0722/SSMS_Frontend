@@ -62,7 +62,7 @@ const UserReceiptManagement = () => {
         const getAllReceipt=async()=>{
             try{
                 setLoading(true)
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                const response = await axios.get("http://localhost:3000/api/receipt");
                 setReceipts(response.data)
                 
 

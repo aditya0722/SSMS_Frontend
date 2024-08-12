@@ -85,28 +85,48 @@ const ConstitutionPage = () => {
             </div>
 
             <div className="mb-4">
-              <p><strong>संख्या 11:</strong> समितिमा नयाँ सदस्यता लिज वाहाने परिवार अथवा व्याक्तिले सदस्यता लिन अधि प्रवेश सुल्क रु 50/- (पचास रुपयाँ) भुक्तान गर्नु पर्ने छ भने प्रतिमहिना मासिक रु 100/- मात्र।</p>
-              <p><strong>Article 11:</strong> For new membership, the individual or family must pay an entry fee of NPR 50/- (fifty rupees) and a monthly fee of NPR 100/-.</p>
+              <p><strong>संख्या 11:</strong> समितिमा नयाँ सदस्यता लिज वाहाने परिवार अथवा व्याक्तिले सदस्यता लिन अधि समितिका 3 वटा मासिक सभाहरुमा नियमीत रुपले सुन्न पर्ने छ, सधै समितिका सबै औपवारितालाई अनुशासित ढंगमा पुरा गर्नु पर्ने छ। समितिले निर्धारण गरिएका सदस्यता जोडने क्रममा स्थापित सदस्यता (Founder Member) भित्रबाट नै आएका उमेद्वारलाई भने नयाँ सदस्यता (Fresh Member) सासीको 50 (पनास प्रतिसत) यसी भुक्तान गर्नु पर्ने छ। येस पहतीलाई भविष्यमा फेर बदल मर्न परे, सोही समय उचित विकल्प लिई कानून तय गरिने छ ।</p>
+              <p><strong>Article 11:</strong> Any family or individual who wants to take membership in the committee must regularly attend three monthly meetings of the committee before obtaining membership. They must fulfill all the official responsibilities of the committee in a disciplined manner. If a candidate comes from within the established membership (Founder Member) during the process of adding new members, they must pay 50% (fifty percent) of the new membership fee. If this provision needs to be changed in the future, appropriate options will be considered, and laws will be made at that time.</p>
             </div>
 
             <div className="mb-4">
-              <p><strong>संख्या 12:</strong> प्रत्येक कार्यकारिणी समितिका सदस्यहरू तथा कार्यकारिणी समितिका सदस्यहरू आफ्नो कार्यको जिम्मेवारी, कर्तव्य र आधिकारलाई इमान्दारिता र निष्ठा पूर्वक पालना गर्नेछ।</p>
-              <p><strong>Article 12:</strong> Each member of the executive committee will fulfill their responsibilities, duties, and rights with honesty and integrity.</p>
+              <p><strong>संख्या 12:</strong> गाँउ समाज भित्र कुनै आपतकालिन समयमा समितिका सदस्यगण तुरुन्तै उपस्थिति दिई (Rescue Operation) आपत प्रबन्धनको निम्ति तत्कालिन बैठक बस्नु पर्ने काजून बनाईयो ।</p>
+              <p><strong>Article 12:</strong>  In case of any emergency within the village, the committee members must immediately be present and hold a meeting to manage the emergency (Rescue Operation).</p>
             </div>
 
             <div className="mb-4">
-              <p><strong>संख्या 13:</strong> सदस्यहरूले मासिक सुलक बुझाउनको लागि प्रत्येक मासिक सभाको मिति देखि १० दिन भित्र बुझाउनेछन।</p>
-              <p><strong>Article 13:</strong> Members must pay their monthly fees within ten days from the date of the monthly meeting.</p>
+              <p><strong>संख्या 13:</strong>  समाज भित्र कुनै प्रकारको रोग हैजा वा कुनै आपत्ती- विपत्ती आइलागेर समितिका कुनै पनि सदस्य-सदस्या भम्भिर अवस्थामा भएको खण्डमा पीडितको अवस्था अनुसार सहयोग को निम्ति नियमित दरले खाता बनाइ घुमाइने छ।</p>
+              <p><strong>Article 13:</strong> If any committee member is in a serious condition due to any disease, cholera, or any disaster within the community, a regular fund will be created and circulated for assistance according to the condition of the affected member.</p>
             </div>
 
             <div className="mb-4">
-              <p><strong>संख्या 14:</strong> समितिका कागजातहरु तथा विवरण हरु जोगाइ राख्न गरिने छ र कोहि व्यक्तिले चाहेमा त्यसको लागि शुल्क पनि लाग्ने छ।</p>
-              <p><strong>Article 14:</strong> The documents and details of the committee will be safeguarded, and a fee may be charged for access to these documents.</p>
+              <p><strong>संख्या 14:</strong> T समितिले कुनै कुनै विश्वदिवसहरु पालन गर्ने नियम बनाइयो । समितिले गाँउ समाजमा आवश्यक्ता अनुसार कल्याणकारी एवं उथानमुलक कामहरु गर्ने नियम बनाइएको छ। जस्तै<br/>
+
+                1. साफ-सफाई अभियान<br/>
+
+                2. जल-संरक्षण अभियान<br/>
+
+                3. हरित क्रान्ती अभियान<br/>
+
+                4. शिक्षा अनि स्वास्थ्य अभियान<br/>
+
+                5. खेल कुद, सङ्गीतिक एवं साहित्यिक अभियान</p>
+              <p><strong>Article 14:</strong>  The committee has established rules to observe certain World Days. The committee has also made rules to undertake welfare and upliftment activities as needed within the village community, such as:<br/>
+
+                1. Cleanliness Campaign<br/>
+
+                2. Water Conservation Campaign<br/>
+
+                3. Green Revolution Campaign<br/>
+
+                4. Education and Health Campaign<br/>
+                
+                5. Sports, Music, and Literary Campaign</p>
             </div>
 
             <div className="mb-4">
-              <p><strong>संख्या 15:</strong> कुनै पनि समयमा समितिका नियमावली तथा संविधानमा परिवर्तन गर्नु परे समितिका सल्लाहकारहरुसँग परामर्श गरी मात्र परिवर्तन गरिने छ।</p>
-              <p><strong>Article 15:</strong> If at any time, changes are required in the rules or constitution of the committee, it will be done only after consultation with the advisors of the committee.</p>
+              <p><strong>संख्या 15:</strong> समितिबाट निष्कासित हुने सदस्यले यहाँ आपलो लागत, समितिको कोषबाट कुनै सर-समान, सामाग्रीहरु र धन राशी केठि फिर्ता लिन पाइने छैन साथै वहाँ समितिको हक, अधिकार र समितिको फाइना लिनबाट सथा बन्चित रहनु हुने छ। (प्रस्ताव 55)</p>
+              <p><strong>Article 15:</strong> A member expelled from the committee will not be able to reclaim any investment, property, materials, or money from the committee's funds. They will also be deprived of the rights, privileges, and benefits of the committee.</p>
             </div>
 
             <div className="mb-4">

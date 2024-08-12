@@ -38,7 +38,7 @@ const UserAttandance = () => {
     const getData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
+        const { data } = await axios.get("http://localhost:3000/api/login/members");
         setMembers(data.map(member => ({ id: member._id, name: member.name })));
       } catch (error) {
         console.error("Error fetching members data:", error);
@@ -54,7 +54,7 @@ const UserAttandance = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("https://ssmss-backend.onrender.com/api/getalldata");
+        const { data } = await axios.get("http://localhost:3000/api/getalldata");
         const { attendance, fees } = data;
 
         const updatedData = {};
@@ -107,11 +107,11 @@ const UserAttandance = () => {
 
     try {
       if (type === "fine") {
-        await axios.post("https://ssmss-backend.onrender.com/api/UpdateAttandanceFine", {
+        await axios.post("http://localhost:3000/api/UpdateAttandanceFine", {
           memberId, date
         })
       } else {
-        await axios.post("https://ssmss-backend.onrender.com/api/updateMothlyFee", {
+        await axios.post("http://localhost:3000/api/updateMothlyFee", {
           memberId, date
         })
       }
@@ -144,14 +144,14 @@ const UserAttandance = () => {
     try {
       setLoading(true);
        if (type === "feePaid") {
-        await axios.post("https://ssmss-backend.onrender.com/api/addmonthlyfee", {
+        await axios.post("http://localhost:3000/api/addmonthlyfee", {
           memberId,
           newDate,
           status: value,
         });
       }
       else {
-        await axios.post("https://ssmss-backend.onrender.com/api/addAttandance", {
+        await axios.post("http://localhost:3000/api/addAttandance", {
           memberId,
           newDate,
           status: value,

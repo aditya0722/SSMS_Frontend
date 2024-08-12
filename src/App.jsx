@@ -25,6 +25,7 @@ import { useUser } from './components/UserContext';
 import PrivateRoute from './components/PrivateRoute';
 import ConstitutionPage from './components/ConstitutionPage';
 import Footer from './components/footer';
+import Blogs from './components/Blogs';
 
 
 
@@ -87,7 +88,7 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/ConstitutionPage" element={<ConstitutionPage />} />
-
+          <Route path="/Blogs" element={<Blogs/>} />
           {/* Admin Routes */}
           <Route 
             path="/AdminDashboard" 
