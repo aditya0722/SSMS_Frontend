@@ -23,7 +23,7 @@ const UserAccountManagement = () => {
         const getData= async()=>{
             setLoading(true);
             try{
-             const response= await axios.get("http://localhost:3000/api/getAccountDetails");
+             const response= await axios.get("https://ssmss-backend.onrender.com/api/getAccountDetails");
                 setTransactions(response.data.data);
                 console.log(transactions)
             }catch(e){

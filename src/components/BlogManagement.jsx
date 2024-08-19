@@ -41,7 +41,7 @@ const BlogManagement = () => {
         const getBlogs = async () => {
             try {
                 setLoading(true)
-                const response = await axios.get("http://localhost:3000/api/blogs");
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
                 setBlogs(response.data);
                 if (response.data.length > 0) {
                     setSelectedBlog(response.data[0]); // Set the first blog as the selected blog by default
@@ -100,9 +100,9 @@ const BlogManagement = () => {
         if (formData._id) {
             try {
                 setLoading(true);
-                await axios.put(`http://localhost:3000/api/updateBlog/${formData._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                await axios.put(`https://ssmss-backend.onrender.com/api/updateBlog/${formData._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
                 handleCloseDialog();
-                const response = await axios.get("http://localhost:3000/api/blogs");
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
                 setBlogs(response.data);
                 setSnackbar({ open: true, message: 'Blog updated successfully', severity: 'success' });
             } catch (error) {
@@ -125,11 +125,11 @@ const BlogManagement = () => {
 
         try {
             setLoading(true);
-            await axios.post('http://localhost:3000/api/postblog', blogData, {
+            await axios.post('https://ssmss-backend.onrender.com/api/postblog', blogData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             setSnackbar({ open: true, message: 'Blog added successfully', severity: 'success' });
-            const response = await axios.get("http://localhost:3000/api/blogs");
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
             setBlogs(response.data);
         } catch (error) {
             console.log(error);
@@ -143,8 +143,8 @@ const BlogManagement = () => {
     const handleDelete = async (id) => {
         try {
             setLoading(true);
-            await axios.delete(`http://localhost:3000/api/deleteBlog/${id}`);
-            const response = await axios.get("http://localhost:3000/api/blogs");
+            await axios.delete(`https://ssmss-backend.onrender.com/api/deleteBlog/${id}`);
+            const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
             setBlogs(response.data);
             setSnackbar({ open: true, message: 'Blog deleted successfully!', severity: 'success' });
         } catch (error) {

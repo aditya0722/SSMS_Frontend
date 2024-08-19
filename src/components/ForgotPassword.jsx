@@ -15,7 +15,7 @@ const ForgotPassword = () => {
   const handlePhoneNumberSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/api/login/forgotPassword', { phoneNumber });
+      const response = await axios.post('https://ssmss-backend.onrender.com/api/login/forgotPassword', { phoneNumber });
       console.log(response)
       if (response.data==="Found") {
         setShowPasswordForm(true);
@@ -36,7 +36,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/login/updatepassword', { phoneNumber, newPassword });
+      const response = await axios.post('https://ssmss-backend.onrender.com/api/login/updatepassword', { phoneNumber, newPassword });
       if (response.data==="success") {
         setSuccessMessage('Password updated successfully.');
         setError('');
