@@ -7,7 +7,7 @@ const HeroSection = () => {
   const navigate=useNavigate()
   const items = [
     {
-      img: "https://images.unsplash.com/photo-1655337690761-99a1de16047f?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      img: "https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723542687/WhatsApp_Image_2024-08-11_at_9.43.43_AM_dvd4j8.jpg",
       alt: "Hero Image 1",
     },
     {

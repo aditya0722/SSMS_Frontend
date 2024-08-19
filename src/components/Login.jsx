@@ -4,7 +4,7 @@ import { Snackbar, Alert } from '@mui/material';
 import { Warning } from '@mui/icons-material';
 import NavBar from './NavBar';
 import { useUser } from './UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 const Login = () => {
   const { setUser } = useUser();
   const navigate = useNavigate();
@@ -20,17 +20,19 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('https://ssmss-backend.onrender.com/api/login', { contact, password });
+      const res = await axios.post('http://localhost:3000/api/login', { contact, password });
+      console.log(res.data)
       const user = res.data.data[0];
-      
+     
       setUser(user);
-      console.log(useUser)
+   
        if (user.userType === 'admin') {
         navigate('/AdminDashboard');
       } else {
         navigate('/UserDashboard');
       }
     } catch (error) {
+      console.log(error)
       setSnackbar({ open: true, message: 'Invalid Email or Password', severity: 'error' });
     }
   };
@@ -58,7 +60,7 @@ const Login = () => {
               <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300">Login</button>
             </form>
             <p className="text-blue-600 mt-4 text-center">
-              Forgot your Password? <a href="/ForgotPassword" className="text-blue-800 hover:underline">Click me</a>
+              Forgot your Password? <Link to="/ForgotPassword" className="text-blue-800 hover:underline">Click me</Link>
             </p>
           </div>
           <Snackbar open={snackbar.open} autoHideDuration={5000} onClose={() => setSnackbar({ ...snackbar, open: false })}>

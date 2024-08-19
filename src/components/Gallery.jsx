@@ -49,10 +49,10 @@ const GalleryItem = styled(Box)(({ theme, rowSpan, colSpan }) => ({
 
 // Define a complex set of images with various sizes
 const images = [
-  { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 1', rowSpan: 2, colSpan: 2 },
-  { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 2', rowSpan: 1, colSpan: 1 },
-  { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 3', rowSpan: 1, colSpan: 2 },
-  { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 4', rowSpan: 1, colSpan: 1 },
+  { src: 'https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723542687/WhatsApp_Image_2024-08-11_at_9.43.44_AM_1_v5xzmr.jpg', alt: 'तस्बिर 1', rowSpan: 2, colSpan: 2 },
+  { src: 'https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723542687/WhatsApp_Image_2024-08-11_at_9.43.44_AM_jwv424.jpg', alt: 'तस्बिर 2', rowSpan: 1, colSpan: 1 },
+  { src: 'https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723542687/WhatsApp_Image_2024-08-11_at_9.43.43_AM_dvd4j8.jpg', alt: 'तस्बिर 3', rowSpan: 1, colSpan: 2 },
+  { src: 'https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723542687/WhatsApp_Image_2024-08-11_at_9.43.42_AM_xyj4f3.jpg', alt: 'तस्बिर 4', rowSpan: 1, colSpan: 1 },
   { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 5', rowSpan: 2, colSpan: 1 },
   { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 6', rowSpan: 1, colSpan: 1 },
   { src: 'https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg', alt: 'तस्बिर 7', rowSpan: 2, colSpan: 2 },

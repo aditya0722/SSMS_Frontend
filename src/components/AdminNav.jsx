@@ -48,7 +48,7 @@ const AdminNav = ({ toggleSidebar }) => {
       </div>
       {/* Logo and Name */}
       <div className="flex items-center space-x-2">
-        <img src="path-to-logo.png" alt="Logo" className="h-8 w-8" />
+        <img src="https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723526685/logo_sqq9fo.jpg" alt="Logo" className="h-12 w-14" />
         <span className="text-lg font-semibold">SSMSS</span>
       </div>
       {/* Spacer to push elements to the right */}
@@ -66,7 +66,7 @@ const AdminNav = ({ toggleSidebar }) => {
       <div className="hidden md:flex items-center space-x-4">
         {user && (
           user.imageUrl ? (
-            <img src={user.imageUrl} alt="User" height="50" width="50" />
+            <img src={user.imageUrl} alt="User" height="50" width="50" style={{borderRadius:"50%"}}/>
           ) : (
             <img src="https://i.pinimg.com/736x/43/6c/ac/436cac73f5fff533999f31147c3538b7.jpg" style={{borderRadius:"50%"}} alt="User" height="50" width="50"/>
           )

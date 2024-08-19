@@ -17,7 +17,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
 
         const fetchStockData = async () => {
             try {
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/store")
+                const response = await axios.get("http://localhost:3000/api/store")
                 setStockData(response.data);
             } catch (error) {
                 console.error('Error fetching stock data:', error);

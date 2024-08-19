@@ -62,7 +62,7 @@ const ItemsReceiptManagement = () => {
         const getAllReceipt=async()=>{
             try{
                 setLoading(true)
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+                const response = await axios.get("http://localhost:3000/api/receipt");
                 setReceipts(response.data)
                 
 
@@ -102,8 +102,8 @@ const ItemsReceiptManagement = () => {
        
         try{
             setLoading(true)
-            await axios.post("https://ssmss-backend.onrender.com/api/savereceipt",receipt)
-            const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+            await axios.post("http://localhost:3000/api/savereceipt",receipt)
+            const response = await axios.get("http://localhost:3000/api/receipt");
             setReceipts(response.data)
             setSnackbar({ open: true, message: 'Receipt added successfully', severity: 'success' });
         }
@@ -130,8 +130,8 @@ const ItemsReceiptManagement = () => {
         try{
             setLoading(true)
             await 
-            axios.delete(`https://ssmss-backend.onrender.com/api/deletereceipt/${id}`)
-            const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+            axios.delete(`http://localhost:3000/api/deletereceipt/${id}`)
+            const response = await axios.get("http://localhost:3000/api/receipt");
                 setReceipts(response.data)
             setSnackbar({ open: true, message: 'Receipt deleted successfully', severity: 'success' });
         }
@@ -239,8 +239,8 @@ const ItemsReceiptManagement = () => {
     
         try {
             setLoading(true)
-          await axios.put(`https://ssmss-backend.onrender.com/api/updatereceipt/${selectedReceipt._id}`, updatedReceipt);
-          const response = await axios.get("https://ssmss-backend.onrender.com/api/receipt");
+          await axios.put(`http://localhost:3000/api/updatereceipt/${selectedReceipt._id}`, updatedReceipt);
+          const response = await axios.get("http://localhost:3000/api/receipt");
                 setReceipts(response.data)
           setSnackbar({ open: true, message: 'Return details submitted successfully', severity: 'success' });
         } catch (error) {

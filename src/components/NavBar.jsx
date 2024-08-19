@@ -12,7 +12,7 @@ const NavBar = () => {
     <header className="bg-white shadow-md">
       <div className="container mx-auto py-4 px-6 flex items-center justify-between">
         <div className="flex items-center">
-          <img src="/path/to/logo.png" alt="Logo" className="h-8 mr-2" />
+          <img src="https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723526685/logo_sqq9fo.jpg" alt="Logo" className="h-12 w-14 mr-2" />
           <span className="text-xl font-semibold text-gray-800">SSMSS</span>
         </div>
         <nav className="hidden md:flex space-x-4">

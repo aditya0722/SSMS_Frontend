@@ -29,7 +29,7 @@ const Blogs = () => {
         const getBlogs = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/blogs");
+                const response = await axios.get("http://localhost:3000/api/blogs");
                 setBlogs(response.data);
                 if (response.data.length > 0) {
                     setSelectedBlog(response.data[0]); // Set the first blog as the selected blog by default
