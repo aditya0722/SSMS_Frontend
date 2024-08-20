@@ -92,6 +92,7 @@ const Blogs = () => {
                             )}
                         </Grid>
                         <Grid item xs={12} md={4}>
+                            <a href="#">
                             <Box
                                 sx={{
                                     overflowY: 'auto',
@@ -131,6 +132,7 @@ const Blogs = () => {
                                     </Box>
                                 ))}
                             </Box>
+                            </a>
                         </Grid>
                     </Grid>
                 </Container>
