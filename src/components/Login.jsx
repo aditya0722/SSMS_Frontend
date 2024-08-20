@@ -5,14 +5,18 @@ import { Warning } from '@mui/icons-material';
 import NavBar from './NavBar';
 import { useUser } from './UserContext';
 import { useNavigate,Link } from 'react-router-dom';
+import Spinner from './Spinner';
+import ProgressBar from './ProgressBar';
 const Login = () => {
   const { setUser } = useUser();
   const navigate = useNavigate();
   const [contact, setNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const submitHandler = async (e) => {
+    setLoading(true);
     e.preventDefault();
     if (!contact || !password) {
       setSnackbar({ open: true, message: 'Please fill the complete form', severity: 'error' });
@@ -20,25 +24,28 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('https://ssmss-backend.onrender.com/api/login', { contact, password });
+      const res = await axios.post('http://localhost:5000/api/login', { contact, password });
       console.log(res.data)
       const user = res.data.data[0];
      
       setUser(user);
-   
+      setLoading(false);
        if (user.userType === 'admin') {
         navigate('/AdminDashboard');
       } else {
         navigate('/UserDashboard');
       }
     } catch (error) {
+      setLoading(false);
       console.log(error)
-      setSnackbar({ open: true, message: 'Invalid Email or Password', severity: 'error' });
+      setSnackbar({ open: true, message: 'Invalid Phone Number or Password', severity: 'error' });
     }
   };
 
   return (
     <>
+    <ProgressBar loading={loading} />
+          <Spinner loading={loading} />
       <NavBar />
       <div className="relative bg-blue-50 overflow-hidden min-h-screen flex items-center justify-center">
         {/* Decorative shapes */}
