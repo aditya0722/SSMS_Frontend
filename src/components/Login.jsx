@@ -24,7 +24,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/api/login', { contact, password });
+      const res = await axios.post('https://ssmss-backend.onrender.com/api/login', { contact, password });
       console.log(res.data)
       const user = res.data.data[0];
      
