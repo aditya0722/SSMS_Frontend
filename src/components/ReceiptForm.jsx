@@ -17,7 +17,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
 
         const fetchStockData = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/store")
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/store")
                 setStockData(response.data);
             } catch (error) {
                 console.error('Error fetching stock data:', error);
@@ -117,7 +117,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     const availableItems = stockData.filter(itemData => !receipt.items.some(item => item.name === itemData.itemName));
 
     return (
-        <Dialog open={open} onClose={onClose} className=" md:w-screen">
+        <Dialog open={open} onClose={onClose} sx={{ width: { md: '100vw' },}}>
             <DialogTitle>{initialData ? 'Edit Receipt' : 'Add Receipt'}</DialogTitle>
             <DialogContent>
                 <TextField
