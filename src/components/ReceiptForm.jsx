@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogActions, DialogContent, TextField, Button, IconButton, MenuItem, Select, Typography } from '@mui/material';
+import { Dialog, DialogTitle, DialogActions, DialogContent, TextField, Button, IconButton, MenuItem, Select, Typography, useMediaQuery } from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     const [receipt, setReceipt] = useState({ items: [], status: 'Taken', name: '', address: '', contactNumber: '', totalAmount: 0 });
     const [stockData, setStockData] = useState([]);
     const [errors, setErrors] = useState({});
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screens
 
     useEffect(() => {
         if (initialData) {
@@ -17,7 +21,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
 
         const fetchStockData = async () => {
             try {
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/store")
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
                 setStockData(response.data);
             } catch (error) {
                 console.error('Error fetching stock data:', error);
@@ -37,7 +41,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                 ...item, 
                 name: selectedItem.itemName, 
                 price: selectedItem.price,
-                rentPrice:selectedItem.rentPrice, 
+                rentPrice: selectedItem.rentPrice, 
                 stock: selectedItem.stock,
                 quantity: '',
                 broken: '' 
@@ -72,7 +76,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const addItem = () => {
-        const newItems = [...receipt.items, { name: '', price: '',rentPrice:'', stock: '', quantity: '', broken: '' }];
+        const newItems = [...receipt.items, { name: '', price: '', rentPrice: '', stock: '', quantity: '', broken: '' }];
         setReceipt(prev => ({ ...prev, items: newItems }));
         updateTotal(newItems);
     };
@@ -95,7 +99,6 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const onSubmit = () => {
-        console.log(receipt)
         if (validate()) {
             onSave(receipt);
         }
@@ -117,7 +120,19 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     const availableItems = stockData.filter(itemData => !receipt.items.some(item => item.name === itemData.itemName));
 
     return (
-        <Dialog open={open} onClose={onClose} sx={{ width: { md: '100vw' },}}>
+        <Dialog 
+            open={open} 
+            onClose={onClose} 
+            maxWidth="100vw"
+            fullScreen={isMobile} // Make dialog fullscreen on mobile
+            PaperProps={{
+                style: {
+                    width: isMobile ? '100vw' : 'auto', // Set width to 100vw on mobile
+                    margin: isMobile ? 0 : 'auto',
+                    padding: isMobile ? '16px' : '24px', // Adjust padding for mobile
+                }
+            }}
+        >
             <DialogTitle>{initialData ? 'Edit Receipt' : 'Add Receipt'}</DialogTitle>
             <DialogContent>
                 <TextField
@@ -157,11 +172,11 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                     <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                         <Select
                             margin="dense"
+                            padding="none"
                             fullWidth
                             value={item.name}
                             onChange={(e) => handleItemChange(e, index)}
-                            style={{ marginRight: '10px' }}
-                        >
+                            style={{ marginRight: '10px', padding: "0px" }}>
                             <MenuItem value=""><em>None</em></MenuItem>
                             {availableItems.map(stockItem => (
                                 <MenuItem key={stockItem._id} value={stockItem.itemName}>
@@ -178,18 +193,16 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                             margin="dense"
                             name="rentPrice"
                             label="Rent Price"
-                            fullWidth
                             value={item.rentPrice}
                             InputProps={{
                                 readOnly: true,
                             }}
-                            style={{ marginRight: '10px' }}
+                            style={{ marginRight: '10px', padding: "0px" }}
                         />
                         <TextField
                             margin="dense"
                             name="stock"
                             label="Stock"
-                            fullWidth
                             value={item.stock}
                             InputProps={{
                                 readOnly: true,
@@ -233,17 +246,11 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                 >
                     Add Item
                 </Button>
-                <Typography variant="h6" align="right">
-                    Total: ${receipt.totalAmount}
-                </Typography>
+                <Typography variant="h6" align="right">Total: {receipt.totalAmount}</Typography>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={onSubmit} color="primary">
-                    {initialData ? 'Update' : 'Submit'}
-                </Button>
+                <Button onClick={onClose} color="secondary">Cancel</Button>
+                <Button onClick={onSubmit} color="primary">Save</Button>
             </DialogActions>
         </Dialog>
     );
