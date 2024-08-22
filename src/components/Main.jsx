@@ -60,7 +60,6 @@ const Main = () => {
                       <Avatar src={testimonial.image} alt={testimonial.name} sx={{ mr: 2, width: 56, height: 56 }} />
                       <Box>
                         <Typography sx={{ fontWeight: 'bold', color: 'secondary.main' }}>{testimonial.name}</Typography>
-                        <Typography variant="body2" sx={{ color: 'black' }}>{testimonial.role}</Typography>
                       </Box>
                     </Box>
                     <Typography variant="body1" sx={{ color: 'black' }}>"{testimonial.text}"</Typography>

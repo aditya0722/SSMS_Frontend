@@ -24,7 +24,7 @@ const Footer = () => {
           <div>
             <h4 className="text-xl font-semibold mb-4">Contact Us</h4>
             <p className="mb-2">Samsing Sawali Goan</p>
-            <p className="mb-2">Sorent District, Sikkim</p>
+            <p className="mb-2">Soreng District, Sikkim</p>
             <p className="mb-2">Email: info@example.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
@@ -53,18 +53,18 @@ const Footer = () => {
             <h4 className="text-xl font-semibold mb-4">Developed By</h4>
             <h4 className="mb-2">Aditya Sharma</h4>
             <div className="flex justify-center md:justify-start space-x-4">
-              <Link to="#" className="text-white hover:text-gray-400 transition duration-300">
+              <a href="https://www.facebook.com/adiityaaaaa" target="blank" className="text-white hover:text-gray-400 transition duration-300">
                 <FaFacebookF />
-              </Link>
-              <Link to="#" className="text-white hover:text-gray-400 transition duration-300">
+              </a>
+              <a href="https://x.com/AdityaS42916257?t=LfopBuFOKdIptC6m-ZIPEQ&s=09" target="blank" className="text-white hover:text-gray-400 transition duration-300">
                 <FaTwitter />
-              </Link>
-              <Link to="#" className="text-white hover:text-gray-400 transition duration-300">
+              </a>
+              <a href="https://www.instagram.com/addittyaaaaaaa?igsh=aWhrMHRtbTA0eGZ5" target="blank" className="text-white hover:text-gray-400 transition duration-300">
                 <FaInstagram />
-              </Link>
-              <Link to="#" className="text-white hover:text-gray-400 transition duration-300">
+              </a>
+              <a href="https://www.linkedin.com/in/aditya-sharma-00a258258?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="blank" className="text-white hover:text-gray-400 transition duration-300">
                 <FaLinkedinIn />
-              </Link>
+              </a>
             </div>
           </div>
         </div>
