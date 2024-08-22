@@ -21,7 +21,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
 
         const fetchStockData = async () => {
             try {
-                const response = await axios.get("https://ssmss-backend.onrender.com/api/store");
+                const response = await axios.get("https://ssmss-backend.onrender.com/api/store")
                 setStockData(response.data);
             } catch (error) {
                 console.error('Error fetching stock data:', error);
@@ -41,7 +41,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                 ...item, 
                 name: selectedItem.itemName, 
                 price: selectedItem.price,
-                rentPrice: selectedItem.rentPrice, 
+                rentPrice:selectedItem.rentPrice, 
                 stock: selectedItem.stock,
                 quantity: '',
                 broken: '' 
@@ -76,7 +76,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const addItem = () => {
-        const newItems = [...receipt.items, { name: '', price: '', rentPrice: '', stock: '', quantity: '', broken: '' }];
+        const newItems = [...receipt.items, { name: '', price: '',rentPrice:'', stock: '', quantity: '', broken: '' }];
         setReceipt(prev => ({ ...prev, items: newItems }));
         updateTotal(newItems);
     };
@@ -99,6 +99,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const onSubmit = () => {
+        console.log(receipt)
         if (validate()) {
             onSave(receipt);
         }
@@ -118,7 +119,6 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
     };
 
     const availableItems = stockData.filter(itemData => !receipt.items.some(item => item.name === itemData.itemName));
-
     return (
         <Dialog 
             open={open} 
@@ -129,7 +129,7 @@ const ReceiptForm = ({ open, onClose, onSave, initialData }) => {
                 style: {
                     width: isMobile ? '100vw' : 'auto', // Set width to 100vw on mobile
                     margin: isMobile ? 0 : 'auto',
-                    padding: isMobile ? '16px' : '24px', // Adjust padding for mobile
+                    padding: isMobile ? '2px' : '24px', // Adjust padding for mobile
                 }
             }}
         >

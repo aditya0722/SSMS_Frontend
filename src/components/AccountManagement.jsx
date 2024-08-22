@@ -229,7 +229,7 @@ const [transactions, setTransactions] = useState([]);
     };
 
     const pieData = (type) => {
-        const categories = type === 'Income' ? ['Donations', 'Monthly', 'joiningFee', 'Other'] : ['Maintenance', 'Donations', 'Utilities', 'Other'];
+        const categories = type === 'income' ? ['Donations', 'Monthly', 'joiningFee', 'Other'] : ['Maintenance', 'Donations', 'Utilities', 'Other'];
     
         // Convert type to uppercase for comparison consistency
         const normalizedType = type.toUpperCase();
@@ -259,7 +259,7 @@ const [transactions, setTransactions] = useState([]);
                 {
                     label: `${type.charAt(0).toUpperCase() + type.slice(1)} Sources`,
                     data: data,
-                    backgroundColor: type === 'Income'
+                    backgroundColor: type === 'income'
                         ? ['rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)', 'rgba(225,140,120,0.5)']
                         : ['rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)', 'rgba(153, 102, 255, 0.5)'],
                 },

@@ -384,6 +384,7 @@ const ItemsReceiptManagement = () => {
                 initialData={formInitialData}
                 onClose={closeForm}
                 onSave={formInitialData ? handleUpdateReceipt : handleAddReceipt}
+                fullWidth
         />
         <div style={{ display: 'flex' }}>
             <div className={`transition-transform duration-300 ${isSidebarCollapsed ? '-translate-x-full lg:translate-x-0 -mx-10' : 'translate-x-0'}`}>
@@ -452,7 +453,7 @@ const ItemsReceiptManagement = () => {
         title="Delete Receipt" 
         description="Are you sure you want to delete this Receipt?" />
         
-        <Dialog open={isDetailOpen} onClose={closeDetailDialog} maxWidth="md" fullWidth>
+        <Dialog open={isDetailOpen} onClose={closeDetailDialog} maxWidth="md" fullWidth={true}>
             <DialogTitle style={{ backgroundColor: '#1976d2', color: 'white' }}>Receipt Details</DialogTitle>
             <DialogContent style={{ backgroundColor: '#e3f2fd' }}>
                 {selectedReceipt && (

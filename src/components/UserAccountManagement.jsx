@@ -93,29 +93,34 @@ const UserAccountManagement = () => {
     };
 
     const pieData = (type) => {
-        const categories = type === 'Income' ? ['Donations', 'Monthly', 'joiningFee', 'Other'] : ['Maintenance', 'Donations', 'Utilities', 'Other'];
-    
+        console.log("type:",type)
+        const categories =[]
+        if(type==='income'){
+            categories=['Donations', 'Monthly', 'joiningFee', 'Other']
+        }
+        else{
+            categories= ['Maintenance', 'Donations', 'Utilities', 'Other'];
+        }
         // Convert type to uppercase for comparison consistency
         const normalizedType = type.toUpperCase();
     
-        console.log(`Generating pie data for type: ${type}`);
-        console.log('Transactions:', transactions);
+        
     
         const data = categories.map(category => {
             const normalizedCategory = category.toUpperCase();
             const filteredTransactions = transactions.filter(t => {
                 const isCategoryMatch = t.category.toUpperCase() === normalizedCategory;
                 const isTypeMatch = t.type.toUpperCase() === normalizedType;
-                console.log(`Transaction: ${JSON.stringify(t)}, Category Match: ${isCategoryMatch}, Type Match: ${isTypeMatch}`);
+              
                 return isCategoryMatch && isTypeMatch;
             });
     
-            console.log(`Filtered Transactions for ${category}:`, filteredTransactions);
+          
     
             return filteredTransactions.reduce((acc, t) => acc + t.ammount, 0);
         });
     
-        console.log(`Data for ${type} Pie Chart:`, data);
+        
     
         return {
             labels: categories.map(category => category.charAt(0).toUpperCase() + category.slice(1)),
@@ -123,7 +128,7 @@ const UserAccountManagement = () => {
                 {
                     label: `${type.charAt(0).toUpperCase() + type.slice(1)} Sources`,
                     data: data,
-                    backgroundColor: type === 'Income'
+                    backgroundColor: type === 'income'
                         ? ['rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)', 'rgba(225,140,120,0.5)']
                         : ['rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)', 'rgba(153, 102, 255, 0.5)'],
                 },

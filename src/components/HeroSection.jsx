@@ -11,11 +11,11 @@ const HeroSection = () => {
       alt: "Hero Image 1",
     },
     {
-      img: "https://images.unsplash.com/photo-1699638664757-89ed1dbec8da?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      img: "https://res.cloudinary.com/dzjlrwbfe/image/upload/v1724315549/WhatsApp_Image_2024-08-21_at_10.12.19_PM_gbyoq8.jpg",
       alt: "Hero Image 2",
     },
     {
-      img: "https://images.unsplash.com/photo-1655337690905-35783231d738?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      img: "https://res.cloudinary.com/dzjlrwbfe/image/upload/v1724315486/WhatsApp_Image_2024-08-21_at_10.12.16_PM_1_r9rtdb.jpg",
       alt: "Hero Image 3",
     },
   ];
