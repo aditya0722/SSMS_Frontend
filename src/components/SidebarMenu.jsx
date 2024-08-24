@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Dashboard, Description, ExitToApp, Poll, SupervisedUserCircle,BookOnline, Web,AccountBoxSharp,Receipt } from '@mui/icons-material';
 import 'react-pro-sidebar';
@@ -11,6 +11,7 @@ const SidebarMenu = ({ collapsed }) => {
   const openConfirm=()=>{
     setIsConfirmOpen(true)
   }
+ 
   const handleDLogout=()=>{
     localStorage.removeItem('user');
     navigate('/');
@@ -37,7 +38,7 @@ const SidebarMenu = ({ collapsed }) => {
         </Menu>
       </div>
     </Sidebar>
-    <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => handleDLogout()} title="Delete Transaction" description="Are you sure you want to Logout?" />
+    <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => handleDLogout()} title="Logout" description="Are you sure you want to Logout?" />
     </>
   );
 };

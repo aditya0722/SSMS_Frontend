@@ -61,10 +61,10 @@ const UserForm = ({ open, handleClose, handleSubmit, initialData }) => {
   const validate = () => {
     let tempErrors = {};
     tempErrors.name = user.name ? "" : "Name is required.";
-    tempErrors.email = /.+@.+\.[A-Za-z]+$/.test(user.email) ? "" : "Email is not valid.";
     tempErrors.contact = user.contact ? "" : "Contact is required.";
     tempErrors.dob = user.dob ? "" : "Date of Birth is required.";
     tempErrors.joiningDate = user.joiningDate ? "" : "Joining Date is required.";
+    tempErrors.address=user.address?"":"Address is Required";
 
     setErrors(tempErrors);
 
@@ -131,8 +131,6 @@ const UserForm = ({ open, handleClose, handleSubmit, initialData }) => {
           fullWidth
           value={user.email}
           onChange={handleChange}
-          error={!!errors.email}
-          helperText={errors.email}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -168,6 +166,8 @@ const UserForm = ({ open, handleClose, handleSubmit, initialData }) => {
             fullWidth
             value={user.address}
             onChange={handleChange}
+            error={!!errors.address}
+            helperText={errors.address}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
