@@ -94,7 +94,7 @@ const UserAccountManagement = () => {
 
     const pieData = (type) => {
         console.log("type:",type)
-        const categories =[]
+        let categories =[]
         if(type==='income'){
             categories=['Donations', 'Monthly', 'joiningFee', 'Other']
         }

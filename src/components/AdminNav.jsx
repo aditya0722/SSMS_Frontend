@@ -3,12 +3,14 @@ import { ExitToApp } from '@mui/icons-material';
 import { FaBars } from 'react-icons/fa';
 import { FaClock } from 'react-icons/fa';
 import { useUser } from "./UserContext"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
+import ConfirmDialog from './ConfirmDialog';
 const AdminNav = ({ toggleSidebar }) => {
   const { user } = useUser();
   const navigate = useNavigate();
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
  
   useEffect(() => {
     if (!user) {
@@ -33,12 +35,20 @@ const AdminNav = ({ toggleSidebar }) => {
   }, []);
 
   const handleLogout = () => {
-
+    setIsConfirmOpen(true)
+   
+  }
+  const logout=()=>{
+    setIsConfirmOpen(false)
     localStorage.removeItem('user');
     navigate('/');
   }
+  const closeConfirm=()=>{
+    setIsConfirmOpen(false)
+  }
 
   return (
+    <>
     <nav className="bg-white shadow-md text-black p-4 flex items-center justify-evenly ">
       {/* Sidebar Toggle (visible only on mobile) */}
       <div className="lg:hidden">
@@ -47,10 +57,12 @@ const AdminNav = ({ toggleSidebar }) => {
         </button>
       </div>
       {/* Logo and Name */}
+      <Link to="/">
       <div className="flex items-center space-x-2">
         <img src="https://res.cloudinary.com/dzjlrwbfe/image/upload/v1723526685/logo_sqq9fo.jpg" alt="Logo" className="h-12 w-14" />
         <span className="text-lg font-semibold">SSMSS</span>
       </div>
+      </Link>
       {/* Spacer to push elements to the right */}
 
       {/* Time and Date */}
@@ -81,6 +93,9 @@ const AdminNav = ({ toggleSidebar }) => {
         <ExitToApp />
         Logout</button>
     </nav>
+    <ConfirmDialog open={isConfirmOpen} handleClose={closeConfirm} handleConfirm={() => logout()} title="Logout" description="Are you sure you want to Logout?" />
+    </>
+      
   );
 };
 
