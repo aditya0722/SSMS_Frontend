@@ -24,9 +24,9 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('https://ssmss-backend.onrender.com/api/login', { contact, password });
+      const res = await axios.post("https://ssmss-backend.onrender.com/api/login', { contact, password });
       console.log(res.data)
-      const user = res.data.data[0];
+      const user = res.data.data;
      
       setUser(user);
       setLoading(false);
@@ -37,7 +37,7 @@ const Login = () => {
       }
     } catch (error) {
       setLoading(false);
-      console.log(error)
+      console.log(error.response.data)
       setSnackbar({ open: true, message: 'Invalid Phone Number or Password', severity: 'error' });
     }
   };
