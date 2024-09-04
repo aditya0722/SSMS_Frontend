@@ -25,7 +25,7 @@ const UserManagement = () => {
       try {
         setLoading(true);
         setFormLoading(true);
-        const { data } = await axios.get("http://localhost:3000/api/login/members");
+        const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
         setUsers(data);
       } catch (error) {
         console.error(error);
@@ -91,9 +91,9 @@ const UserManagement = () => {
     formData.append('password', otp);
 
     try {
-      await axios.post("http://localhost:3000/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post("https://ssmss-backend.onrender.com/api/register", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       sendSMS(user.contact, otp);
-      const { data } = await axios.get("http://localhost:3000/api/login/members");
+      const { data } = await axios.get("https://ssmss-backend.onrender.com/api/login/members");
       setUsers(data);
       setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
     } catch (error) {
@@ -114,7 +114,7 @@ const UserManagement = () => {
     });
 
     try {
-      await axios.put(`http://localhost:3000/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.put(`https://ssmss-backend.onrender.com/api/updateUser/${user._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setSnackbar({ open: true, message: 'User updated successfully', severity: 'success' });
     } catch (error) {
       setSnackbar({ open: true, message: 'Error occurred', severity: 'error' });
@@ -138,7 +138,7 @@ const UserManagement = () => {
     openForm(user);}
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/deleteUser/${id}`);
+      await axios.delete(`https://ssmss-backend.onrender.com/api/deleteUser/${id}`);
       setUsers(users.filter(user => user._id !== id));
       setSnackbar({ open: true, message: 'User deleted successfully!', severity: 'success' });
     } catch (error) {
